@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QueryLens | SQL Query Cost Analyser</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="nav-container">
+
+    <a href="#top" class="logo">
+      <span class="logo-mark">
+        <i></i><i></i><i></i>
+      </span>
+      <span class="logo-text">Query<span>Lens</span></span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="#analyser">Analyze</a>
+      <a href="#learn">Learn</a>
+      <a href="#developed">Developed By</a>
+      <a href="#help">Help</a>
+
+      <div class="download-wrapper">
+        <button class="nav-button" id="downloadBtn" type="button">Download ▾</button>
+
+        <div class="download-menu" id="downloadMenu">
+          <button id="downloadText" type="button">Text Report</button>
+          <button id="downloadDoc" type="button">Document Report</button>
+          <button id="downloadJson" type="button">JSON Report</button>
+          <button id="downloadPdf" type="button">Print / Save PDF</button>
+        </div>
+      </div>
+
+      <button class="theme-toggle" id="themeToggle" type="button" title="Toggle Day/Night Mode">
+        <span id="themeIcon">☾</span>
+      </button>
+    </nav>
+
+    <button class="mobile-menu" id="mobileMenu" type="button">☰</button>
+
+  </div>
+</header>
+
+
+<main id="top">
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+  <div class="hero-container">
+
+    <div class="hero-content">
+
+      <span class="eyebrow">DBMS • QUERY OPTIMIZATION • VISUAL ANALYTICS</span>
+
+      <h1>
+        Understand the
+        <span>cost</span>
+        behind your SQL.
+      </h1>
+
+      <p>
+        QueryLens is a browser-based SQL Query Cost Analyser that processes
+        SQL queries, evaluates query structure, estimates computational work,
+        visualizes execution characteristics and provides optimization advice.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#analyser" class="primary-button">Start Analyzing →</a>
+        <a href="#learn" class="secondary-button">Learn SQL Optimization</a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <strong>3K+</strong>
+          <span>Customers</span>
+        </div>
+
+        <div class="hero-stat">
+          <strong>500+</strong>
+          <span>Products</span>
+        </div>
+
+        <div class="hero-stat">
+          <strong>25K+</strong>
+          <span>Orders</span>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="hero-visual">
+
+      <div class="code-window">
+
+        <div class="window-header">
+          <div class="window-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span>query.sql</span>
+        </div>
+
+        <div class="code-content">
+
+<pre><code><span class="code-keyword">SELECT</span>
+    c.name,
+    <span class="code-function">COUNT</span>(o.id) <span class="code-keyword">AS</span> orders
+<span class="code-keyword">FROM</span> customers c
+<span class="code-keyword">JOIN</span> orders o
+    <span class="code-keyword">ON</span> c.id = o.customer_id
+<span class="code-keyword">WHERE</span> c.country = <span class="code-string">'India'</span>
+<span class="code-keyword">GROUP BY</span> c.id
+<span class="code-keyword">ORDER BY</span> orders <span class="code-keyword">DESC</span>;</code></pre>
+
+        </div>
+
+        <div class="code-result">
+          <div>
+            <span>Estimated Cost</span>
+            <strong>28</strong>
+          </div>
+
+          <div>
+            <span>Execution</span>
+            <strong>1.82 ms</strong>
+          </div>
+
+          <div>
+            <span>Score</span>
+            <strong>82 / 100</strong>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ================= ANALYSER ================= -->
+
+<section id="analyser" class="section">
+
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">QUERY ANALYSER</span>
+      <h2>Analyze your SQL query</h2>
+      <p>
+        Enter a supported SELECT query and QueryLens will process it
+        entirely inside your browser.
+      </p>
+    </div>
+  </div>
+
+
+  <div class="analysis-grid">
+
+    <!-- INPUT -->
+
+    <div class="panel">
+
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="panel-number">01</span>
+
+          <div>
+            <h3>SQL Input</h3>
+            <p>Enter a SELECT query to analyze.</p>
+          </div>
+        </div>
+      </div>
+
+
+      <textarea
+        id="sqlInput"
+        class="sql-editor"
+        spellcheck="false"
+        placeholder="SELECT * FROM customers WHERE country = 'India';"
+      ></textarea>
+
+
+      <div class="editor-actions">
+
+        <button class="primary-button small" id="analyzeBtn" type="button">
+          Analyze Query
+        </button>
+
+        <button class="secondary-button small" id="exampleBtn" type="button">
+          Load Example
+        </button>
+
+        <button class="ghost-button small" id="clearBtn" type="button">
+          Clear
+        </button>
+
+      </div>
+
+
+      <div class="shortcut-hint">
+        Tip: Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to analyze.
+      </div>
+
+      <div id="errorMessage" class="error-message hidden"></div>
+
+    </div>
+
+
+    <!-- SCHEMA -->
+
+    <div class="panel">
+
+      <div class="panel-header">
+
+        <div class="panel-title">
+
+          <span class="panel-number">02</span>
+
+          <div>
+            <h3>Database Schema</h3>
+            <p>Browser-side demonstration database.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div id="schemaContainer" class="schema-container"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- COST -->
+
+  <div class="panel result-panel">
+
+    <div class="panel-header">
+
+      <div class="panel-title">
+
+        <span class="panel-number">03</span>
+
+        <div>
+          <h3>Cost Analysis</h3>
+          <p>Dynamic analysis generated from your submitted SQL.</p>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div id="emptyAnalysis" class="empty-state">
+
+      <div class="empty-icon">◇</div>
+
+      <h3>No query analyzed yet</h3>
+
+      <p>
+        Enter a SQL query above and click
+        <strong>Analyze Query</strong>.
+      </p>
+
+    </div>
+
+
+    <div id="analysisContent" class="hidden">
+
+      <!-- SCORE -->
+
+      <div class="score-section">
+
+        <div class="score-circle" id="scoreCircle">
+
+          <div class="score-inner">
+            <strong id="scoreValue">--</strong>
+            <span>/ 100</span>
+          </div>
+
+        </div>
+
+
+        <div class="score-description">
+
+          <span class="eyebrow">QUERY SCORE</span>
+
+          <h3 id="scoreCategory">--</h3>
+
+          <p id="scoreDescription">--</p>
+
+        </div>
+
+      </div>
+
+
+      <!-- METRICS -->
+
+      <div class="metrics-grid">
+
+        <div class="metric-card">
+          <span class="metric-label">Estimated Cost</span>
+          <strong id="estimatedCost">--</strong>
+          <span class="metric-unit">cost units</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Execution Time</span>
+          <strong id="executionTime">--</strong>
+          <span class="metric-unit">milliseconds</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Rows Returned</span>
+          <strong id="rowsReturned">--</strong>
+          <span class="metric-unit">rows</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Full Scans</span>
+          <strong id="fullScans">--</strong>
+          <span class="metric-unit">operations</span>
+        </div>
+
+      </div>
+
+
+      <!-- EXECUTION PLAN -->
+
+      <div class="subsection">
+
+        <div class="subsection-heading">
+
+          <div class="panel-title">
+
+            <span class="panel-number">04</span>
+
+            <div>
+              <h3>Execution Plan</h3>
+              <p>
+                Browser-generated plan showing how QueryLens interprets
+                the SQL structure.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div id="executionPlan" class="execution-plan"></div>
+
+      </div>
+
+
+      <!-- PLAN METRICS -->
+
+      <div class="subsection">
+
+        <div class="subsection-heading">
+
+          <div class="panel-title">
+
+            <span class="panel-number">05</span>
+
+            <div>
+              <h3>Query Plan Metrics</h3>
+              <p>Detected operations contributing to estimated work.</p>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="plan-metrics-grid">
+
+          <div class="plan-metric">
+            <span>Full Scans</span>
+            <strong id="planFullScans">0</strong>
+          </div>
+
+          <div class="plan-metric">
+            <span>Index Searches</span>
+            <strong id="indexSearches">0</strong>
+          </div>
+
+          <div class="plan-metric">
+            <span>Temporary Structures</span>
+            <strong id="temporaryStructures">0</strong>
+          </div>
+
+          <div class="plan-metric">
+            <span>Joins</span>
+            <strong id="joinCount">0</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- VISUALIZATION -->
+
+      <div class="subsection">
+
+        <div class="subsection-heading">
+
+          <div class="panel-title">
+
+            <span class="panel-number">06</span>
+
+            <div>
+              <h3>Cost Visualization</h3>
+              <p>Visual representation of detected query operations.</p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div id="costVisualization" class="cost-visualization"></div>
+
+      </div>
+
+
+      <!-- RECOMMENDATIONS -->
+
+      <div class="subsection">
+
+        <div class="subsection-heading">
+
+          <div class="panel-title">
+
+            <span class="panel-number">07</span>
+
+            <div>
+              <h3>Optimization Advisor</h3>
+              <p>Recommendations generated from the SQL structure.</p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div id="recommendations" class="recommendations"></div>
+
+      </div>
+
+
+      <!-- RESULTS -->
+
+      <div class="subsection">
+
+        <div class="subsection-heading">
+
+          <div class="panel-title">
+
+            <span class="panel-number">08</span>
+
+            <div>
+              <h3>Query Result</h3>
+              <p>Results dynamically generated from the browser-side dataset.</p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div id="resultTable" class="result-table-wrapper"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- TESTING -->
+
+  <div class="panel">
+
+    <div class="panel-header">
+
+      <div class="panel-title">
+
+        <span class="panel-number">09</span>
+
+        <div>
+          <h3>Testing & Verification</h3>
+          <p>Run predefined SQL test cases.</p>
+        </div>
+
+      </div>
+
+      <button class="primary-button small" id="runTestsBtn" type="button">
+        Run Tests
+      </button>
+
+    </div>
+
+
+    <div id="testResults" class="test-results">
+
+      <div class="empty-state compact">
+        <div class="empty-icon">✓</div>
+        <p>Click "Run Tests" to verify QueryLens.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- HISTORY -->
+
+  <div class="panel">
+
+    <div class="panel-header">
+
+      <div class="panel-title">
+
+        <span class="panel-number">10</span>
+
+        <div>
+          <h3>Analysis History</h3>
+          <p>Recently analyzed queries stored in this browser.</p>
+        </div>
+
+      </div>
+
+      <button class="ghost-button small" id="clearHistoryBtn" type="button">
+        Clear History
+      </button>
+
+    </div>
+
+
+    <div id="historyContainer" class="history-container"></div>
+
+  </div>
+
+</section>
+
+
+<!-- ================= LEARN ================= -->
+
+<section id="learn" class="section light-section">
+
+  <div class="section-heading">
+
+    <div>
+
+      <span class="eyebrow">LEARN</span>
+
+      <h2>Understand SQL Query Optimization</h2>
+
+      <p>
+        Learn how databases process SQL queries and why indexes,
+        filtering, joins and sorting affect query cost.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div class="learn-grid">
+
+    <article class="learn-card large">
+
+      <span class="learn-number">01</span>
+
+      <h3>What is Query Cost?</h3>
+
+      <p>
+        Query cost represents the amount of computational work associated
+        with executing a database query. Database optimizers consider
+        different execution strategies before choosing a plan.
+      </p>
+
+      <p>
+        QueryLens uses an educational cost model based on query
+        characteristics such as scans, index usage, joins, filtering,
+        aggregation and sorting.
+      </p>
+
+
+      <div class="concept-points">
+
+        <div>
+          <strong>Table Scan</strong>
+          <span>Reads rows from a table to find matching records.</span>
+        </div>
+
+        <div>
+          <strong>Index Search</strong>
+          <span>Uses an index to locate relevant rows more efficiently.</span>
+        </div>
+
+        <div>
+          <strong>Join</strong>
+          <span>Combines records from two or more tables.</span>
+        </div>
+
+        <div>
+          <strong>Temporary Structure</strong>
+          <span>May be needed for sorting, grouping or distinct operations.</span>
+        </div>
+
+      </div>
+
+    </article>
+
+
+    <article class="learn-card">
+
+      <span class="learn-number">02</span>
+
+      <h3>How QueryLens Works</h3>
+
+      <div class="process-flow">
+
+        <div><span>1</span><p>SQL Input</p></div>
+        <div><span>2</span><p>Parsing</p></div>
+        <div><span>3</span><p>Execution</p></div>
+        <div><span>4</span><p>Analysis</p></div>
+        <div><span>5</span><p>Visualization</p></div>
+
+      </div>
+
+    </article>
+
+
+    <article class="learn-card">
+
+      <span class="learn-number">03</span>
+
+      <h3>Important Terms</h3>
+
+      <div class="term-list">
+
+        <div>
+          <strong>SELECT</strong>
+          <p>Retrieves data from one or more tables.</p>
+        </div>
+
+        <div>
+          <strong>WHERE</strong>
+          <p>Filters rows according to a condition.</p>
+        </div>
+
+        <div>
+          <strong>JOIN</strong>
+          <p>Combines related data from multiple tables.</p>
+        </div>
+
+        <div>
+          <strong>GROUP BY</strong>
+          <p>Groups rows so aggregate functions can be applied.</p>
+        </div>
+
+      </div>
+
+    </article>
+
+  </div>
+
+
+  <!-- VIDEO -->
+
+  <div class="learning-video">
+
+    <div class="video-heading">
+
+      <span class="eyebrow">EDUCATIONAL VIDEO</span>
+
+      <h3>SQL Fundamentals & Query Processing</h3>
+
+    </div>
+
+    <div class="video-wrapper">
+
+      <iframe
+        src="https://www.youtube.com/embed/HXV3zeQKqGY"
+        title="SQL Tutorial"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
+
+    </div>
+
+  </div>
+
+
+  <!-- REFERENCES -->
+
+  <div class="references">
+
+    <div class="section-heading small-heading">
+
+      <div>
+        <span class="eyebrow">REFERENCES</span>
+        <h3>Further Learning Resources</h3>
+      </div>
+
+    </div>
+
+
+    <div class="reference-grid">
+
+      <a href="https://www.sqlite.org/queryplanner.html"
+         target="_blank"
+         class="reference-card">
+
+        <span>WEBSITE</span>
+
+        <h4>SQLite Query Planner</h4>
+
+        <p>
+          Official documentation explaining query planning and indexing.
+        </p>
+
+      </a>
+
+
+      <a href="https://www.sqlite.org/eqp.html"
+         target="_blank"
+         class="reference-card">
+
+        <span>DOCUMENTATION</span>
+
+        <h4>SQLite EXPLAIN QUERY PLAN</h4>
+
+        <p>
+          Documentation explaining SQLite's execution-plan output.
+        </p>
+
+      </a>
+
+
+      <a href="https://www.w3schools.com/sql/"
+         target="_blank"
+         class="reference-card">
+
+        <span>WEBSITE</span>
+
+        <h4>W3Schools SQL</h4>
+
+        <p>
+          SQL syntax, joins, filtering, grouping and database fundamentals.
+        </p>
+
+      </a>
+
+
+      <a href="https://www.geeksforgeeks.org/dbms/"
+         target="_blank"
+         class="reference-card">
+
+        <span>EDUCATIONAL RESOURCE</span>
+
+        <h4>GeeksforGeeks DBMS</h4>
+
+        <p>
+          DBMS concepts including query processing and optimization.
+        </p>
+
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ================= DEVELOPED BY ================= -->
+
+<section id="developed" class="section">
+
+  <div class="section-heading">
+
+    <div>
+
+      <span class="eyebrow">DEVELOPED BY</span>
+
+      <h2>Project Team</h2>
+
+      <p>QueryLens — SQL Query Cost Analyser</p>
+
+    </div>
+
+  </div>
+
+
+  <div class="team-grid">
+
+    <article class="team-card">
+
+      <div class="avatar">AA</div>
+
+      <h3>Ayan Aslam Khan</h3>
+
+      <p>Register No: 25BCE5356</p>
+
+    </article>
+
+
+    <article class="team-card">
+
+      <div class="avatar">DG</div>
+
+      <h3>Devansh Ginoria</h3>
+
+      <p>Register No: 25BCE5569</p>
+
+    </article>
+
+
+    <article class="team-card">
+
+      <div class="avatar">SP</div>
+
+      <h3>Shaurya Singh Panwar</h3>
+
+      <p>Register No: 25BCE5255</p>
+
+    </article>
+
+
+    <article class="guide-card">
+
+      <span>GUIDED BY</span>
+
+      <h3>Dr. Swaminathan A</h3>
+
+      <p>Assistant Professor</p>
+
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- ================= HELP ================= -->
+
+<section id="help" class="section light-section">
+
+  <div class="section-heading">
+
+    <div>
+
+      <span class="eyebrow">HELP</span>
+
+      <h2>How to Use QueryLens</h2>
+
+      <p>Follow these steps to analyze and understand your SQL query.</p>
+
+    </div>
+
+  </div>
+
+
+  <div class="help-grid">
+
+    <article class="help-step">
+      <span>01</span>
+      <h3>Enter SQL</h3>
+      <p>
+        Enter a supported SELECT query into the SQL editor.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>02</span>
+      <h3>Analyze Query</h3>
+      <p>
+        Click Analyze Query. QueryLens parses the query and executes it
+        against its browser-side demonstration data.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>03</span>
+      <h3>Check Cost</h3>
+      <p>
+        Review the score, estimated cost, execution time and rows returned.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>04</span>
+      <h3>Study Execution Plan</h3>
+      <p>
+        Examine detected scans, index searches, joins and temporary structures.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>05</span>
+      <h3>Read Recommendations</h3>
+      <p>
+        Use the Optimization Advisor to identify possible improvements.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>06</span>
+      <h3>Download Report</h3>
+      <p>
+        Download the analysis as text, document, JSON or printable PDF.
+      </p>
+    </article>
+
+  </div>
+
+
+  <div class="faq-section">
+
+    <div class="section-heading small-heading">
+
+      <div>
+        <span class="eyebrow">FAQ</span>
+        <h3>Frequently Asked Questions</h3>
+      </div>
+
+    </div>
+
+
+    <div class="faq-grid">
+
+      <details>
+        <summary>Is QueryLens completely browser-based?</summary>
+        <p>
+          Yes. This GitHub Pages version performs its processing using
+          JavaScript running in the user's browser.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>Does QueryLens use a real database server?</summary>
+        <p>
+          No. The GitHub Pages version uses a generated demonstration
+          dataset stored in browser memory. It does not require Node.js,
+          SQLite or a server.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>What SQL can I use?</summary>
+        <p>
+          QueryLens supports a useful subset of SELECT queries including
+          filtering, sorting, aggregation, grouping and common joins.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>Is the cost score a database optimizer's actual cost?</summary>
+        <p>
+          No. It is an educational cost metric derived from the detected
+          characteristics of the submitted query.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>Where is analysis history stored?</summary>
+        <p>
+          Recent analyses are stored in the browser's localStorage.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>Can I save my analysis as a PDF?</summary>
+        <p>
+          Yes. Select Print / Save PDF from the Download menu and choose
+          "Save as PDF" in your browser's print dialog.
+        </p>
+      </details>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ================= FINAL ================= -->
+
+<section class="final-section">
+
+  <div class="final-content">
+
+    <span class="eyebrow">QUERYLENS</span>
+
+    <h2>
+      Write smarter SQL.
+      Understand what happens underneath.
+    </h2>
+
+    <p>
+      Explore query structure, identify expensive operations and learn
+      how database systems process SQL.
+    </p>
+
+    <a href="#analyser" class="primary-button">
+      Analyze a Query →
+    </a>
+
+  </div>
+
+</section>
+
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+
+  <div class="footer-container">
+
+    <div class="footer-brand">
+
+      <div class="logo">
+        <span class="logo-mark">
+          <i></i><i></i><i></i>
+        </span>
+
+        <span class="logo-text">
+          Query<span>Lens</span>
+        </span>
+      </div>
+
+      <p>SQL Query Cost Analyser</p>
+
+    </div>
+
+
+    <div class="footer-info">
+      <p>DBMS DA1 Project</p>
+      <p>Guided by Dr. Swaminathan A</p>
+    </div>
+
+
+    <div class="footer-copy">
+      <p>© 2026 QueryLens</p>
+    </div>
+
+  </div>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
