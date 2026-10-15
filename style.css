@@ -65,6 +65,10 @@ a{
   text-decoration:none;
 }
 
+img{
+  max-width:100%;
+}
+
 .hidden{
   display:none!important;
 }
@@ -1276,51 +1280,86 @@ kbd{
   gap:17px;
 }
 
-.team-card,
-.guide-card{
+.team-card{
   padding:28px 20px;
   text-align:center;
   border:1px solid var(--border);
   border-radius:var(--radius);
   background:var(--surface);
   box-shadow:var(--small-shadow);
+  transition:.2s;
 }
 
-.avatar{
-  width:70px;
-  height:70px;
-  margin:0 auto 15px;
+.team-card:hover{
+  transform:translateY(-4px);
+  border-color:var(--primary);
+}
+
+/* Photo frame. The fallback initials sit underneath the
+   image, so they show through if the file fails to load. */
+
+.avatar-wrap{
+  position:relative;
+  width:110px;
+  height:110px;
+  margin:0 auto 16px;
+  border-radius:22px;
+  overflow:hidden;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  box-shadow:0 8px 20px color-mix(in srgb,var(--primary) 22%,transparent);
+}
+
+.avatar-photo{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.avatar-fallback{
+  position:absolute;
+  inset:0;
   display:grid;
   place-items:center;
-  border-radius:18px;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  color:white;
+  color:#fff;
   font-weight:900;
-  font-size:1.25rem;
+  font-size:1.6rem;
+  letter-spacing:1px;
 }
 
-.team-card h3,
-.guide-card h3{
-  font-size:1rem;
+.team-card h3{
+  font-size:1.02rem;
   margin-bottom:4px;
 }
 
-.team-card p,
-.guide-card p{
+.team-reg{
   color:var(--muted);
   font-size:.73rem;
 }
 
-.guide-card{
-  display:flex;
-  justify-content:center;
-  flex-direction:column;
+.team-role{
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px solid var(--border);
+  color:var(--primary);
+  font-size:.7rem;
+  font-weight:700;
+  letter-spacing:.3px;
 }
 
-.guide-card>span{
-  margin-bottom:7px;
+.guide-card{
+  background:
+    radial-gradient(circle at 50% 0%,color-mix(in srgb,var(--primary) 10%,transparent),transparent 60%),
+    var(--surface);
+}
+
+.guide-label{
+  display:block;
+  margin-bottom:12px;
   color:var(--primary);
-  font-size:.65rem;
+  font-size:.63rem;
   font-weight:900;
   letter-spacing:1.2px;
 }
@@ -2135,6 +2174,13 @@ details p{
     border-top:1px solid #292d39;
   }
 
+  /* Smaller photo frame on narrow screens */
+
+  .avatar-wrap{
+    width:92px;
+    height:92px;
+  }
+
   /* Exam and quiz on small screens */
 
   .quiz-modal{
@@ -2229,6 +2275,20 @@ details p{
   }
 
   .subsection{
+    page-break-inside:avoid;
+  }
+
+  /* Team photos print in greyscale to save ink.
+     Only applies if #developed is removed from the hide
+     list above. */
+
+  .avatar-photo{
+    filter:grayscale(100%);
+  }
+
+  .team-card{
+    box-shadow:none;
+    border:1px solid #ccc;
     page-break-inside:avoid;
   }
 

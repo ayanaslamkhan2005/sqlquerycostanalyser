@@ -356,6 +356,30 @@ $("themeToggle").addEventListener("click",()=>{
 
 
 /* =========================================================
+   AVATAR FALLBACK
+
+   If a team photo is missing or fails to load, hide the
+   image so the gradient block and initials show instead
+   of a broken-image icon.
+========================================================= */
+
+function initAvatars(){
+
+  document.querySelectorAll(".avatar-photo").forEach(img=>{
+
+    const hide = ()=>{ img.style.display = "none"; };
+
+    img.addEventListener("error",hide);
+
+    /* Catch images that already failed before this ran. */
+    if(img.complete && img.naturalWidth === 0){
+      hide();
+    }
+  });
+}
+
+
+/* =========================================================
    MOBILE NAV
 ========================================================= */
 
@@ -1367,8 +1391,6 @@ function executeQuery(sql){
     rows = groupRows(rows,groupMatch[1].trim());
   }
 
-  /* HAVING — evaluated against each group before projection. */
-
   /* HAVING — evaluated against each group before projection.
 
      Aggregate calls are substituted with placeholder identifiers
@@ -1411,14 +1433,14 @@ function executeQuery(sql){
 
     rows = rows.filter(groupRow=>{
 
-      const groupRows = groupRow.__groupRows || [groupRow];
+      const groupRowSet = groupRow.__groupRows || [groupRow];
 
       /* Context holds the group's columns plus one entry
          per aggregate placeholder. */
       const context = { ...groupRow };
 
       aggregateCalls.forEach((expression,i)=>{
-        context[`__agg${i}`] = aggregateValue(groupRows,expression);
+        context[`__agg${i}`] = aggregateValue(groupRowSet,expression);
       });
 
       return evaluateNode(context,tree);
@@ -2113,8 +2135,8 @@ $("clearHistoryBtn").addEventListener("click",()=>{
 /* =========================================================
    TESTING
 
-   Each case now asserts a concrete expected outcome rather
-   than merely checking that nothing threw.
+   Each case asserts a concrete expected outcome rather than
+   merely checking that nothing threw.
 ========================================================= */
 
 $("runTestsBtn").addEventListener("click",runTests);
@@ -2217,6 +2239,14 @@ function runTests(){
     },
 
     {
+      name:"HAVING with two aggregates",
+      query:"SELECT status, COUNT(*) AS n, SUM(amount) AS total FROM orders GROUP BY status HAVING COUNT(*) > 0 AND SUM(amount) > 0;",
+      check:(execution)=>
+        execution.totalRows === 4 &&
+        execution.rows.every(r => r.n > 0 && r.total > 0)
+    },
+
+    {
       name:"Unsupported predicate is rejected",
       query:"SELECT id FROM customers WHERE country MATCHES 'India';",
       expectError:true
@@ -2231,6 +2261,12 @@ function runTests(){
     {
       name:"Unknown table is rejected",
       query:"SELECT * FROM suppliers;",
+      expectError:true
+    },
+
+    {
+      name:"HAVING without GROUP BY is rejected",
+      query:"SELECT id FROM orders HAVING COUNT(*) > 5;",
       expectError:true
     }
 
@@ -2536,7 +2572,9 @@ function init(){
 
   initTheme();
 
-    /* startQuizModule comes from quiz.js and is idempotent. */
+  initAvatars();
+
+  /* startQuizModule comes from quiz.js and is idempotent. */
   if(typeof startQuizModule === "function"){
     startQuizModule();
   }
