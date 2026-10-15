@@ -24,6 +24,9 @@
       <a href="#learn">Learn</a>
       <a href="#developed">Developed By</a>
       <a href="#help">Help</a>
+      <a href="#exam">Competitive Exam</a>
+
+      <button class="nav-button quiz-nav-btn" id="quizBtn" type="button">QUIZ</button>
 
       <div class="download-wrapper">
         <button class="nav-button" id="downloadBtn" type="button">Download ▾</button>
@@ -335,6 +338,24 @@
           <span class="metric-unit">operations</span>
         </div>
 
+        <div class="metric-card">
+          <span class="metric-label">Estimated Rows</span>
+          <strong id="estimatedRows">--</strong>
+          <span class="metric-unit">after filtering</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Selectivity</span>
+          <strong id="selectivityValue">--</strong>
+          <span class="metric-unit">rows surviving</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Index Used</span>
+          <strong id="indexUsed">--</strong>
+          <span class="metric-unit">leading column</span>
+        </div>
+
       </div>
 
 
@@ -424,7 +445,7 @@
 
             <div>
               <h3>Cost Visualization</h3>
-              <p>Visual representation of detected query operations.</p>
+              <p>Share of the estimated cost contributed by each operator.</p>
             </div>
 
           </div>
@@ -456,6 +477,34 @@
         </div>
 
         <div id="recommendations" class="recommendations"></div>
+
+      </div>
+
+
+      <!-- REWRITE SUGGESTIONS -->
+
+      <div class="subsection">
+
+        <div class="subsection-heading">
+
+          <div class="panel-title">
+
+            <span class="panel-number">07b</span>
+
+            <div>
+              <h3>Suggested Rewrites</h3>
+              <p>
+                Copy-ready SQL and DDL generated from the detected issues.
+                These are suggestions to run against a real database —
+                QueryLens does not execute them.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div id="rewriteSuggestions" class="rewrite-list"></div>
 
       </div>
 
@@ -499,8 +548,8 @@
         <span class="panel-number">09</span>
 
         <div>
-          <h3>Testing & Verification</h3>
-          <p>Run predefined SQL test cases.</p>
+          <h3>Testing &amp; Verification</h3>
+          <p>Run predefined SQL test cases with assertions.</p>
         </div>
 
       </div>
@@ -592,9 +641,9 @@
       </p>
 
       <p>
-        QueryLens uses an educational cost model based on query
-        characteristics such as scans, index usage, joins, filtering,
-        aggregation and sorting.
+        QueryLens uses an educational cost model. It estimates how many
+        rows survive each filter using table statistics, then charges every
+        plan operator for the page reads and CPU work it performs.
       </p>
 
 
@@ -602,12 +651,17 @@
 
         <div>
           <strong>Table Scan</strong>
-          <span>Reads rows from a table to find matching records.</span>
+          <span>Reads every row of a table to find matching records.</span>
         </div>
 
         <div>
           <strong>Index Search</strong>
-          <span>Uses an index to locate relevant rows more efficiently.</span>
+          <span>Uses an index to seek directly to the matching range.</span>
+        </div>
+
+        <div>
+          <strong>Selectivity</strong>
+          <span>The fraction of rows a predicate is expected to keep.</span>
         </div>
 
         <div>
@@ -617,7 +671,12 @@
 
         <div>
           <strong>Temporary Structure</strong>
-          <span>May be needed for sorting, grouping or distinct operations.</span>
+          <span>Needed for sorting, grouping or distinct operations.</span>
+        </div>
+
+        <div>
+          <strong>Cardinality</strong>
+          <span>The estimated number of rows flowing out of an operator.</span>
         </div>
 
       </div>
@@ -636,7 +695,7 @@
         <div><span>1</span><p>SQL Input</p></div>
         <div><span>2</span><p>Parsing</p></div>
         <div><span>3</span><p>Execution</p></div>
-        <div><span>4</span><p>Analysis</p></div>
+        <div><span>4</span><p>Costing</p></div>
         <div><span>5</span><p>Visualization</p></div>
 
       </div>
@@ -659,7 +718,7 @@
 
         <div>
           <strong>WHERE</strong>
-          <p>Filters rows according to a condition.</p>
+          <p>Filters rows before grouping takes place.</p>
         </div>
 
         <div>
@@ -670,6 +729,11 @@
         <div>
           <strong>GROUP BY</strong>
           <p>Groups rows so aggregate functions can be applied.</p>
+        </div>
+
+        <div>
+          <strong>HAVING</strong>
+          <p>Filters the groups after aggregation.</p>
         </div>
 
       </div>
@@ -687,7 +751,7 @@
 
       <span class="eyebrow">EDUCATIONAL VIDEO</span>
 
-      <h3>SQL Fundamentals & Query Processing</h3>
+      <h3>SQL Fundamentals &amp; Query Processing</h3>
 
     </div>
 
@@ -752,6 +816,21 @@
       </a>
 
 
+      <a href="https://www.postgresql.org/docs/current/planner-stats.html"
+         target="_blank"
+         class="reference-card">
+
+        <span>DOCUMENTATION</span>
+
+        <h4>PostgreSQL Planner Statistics</h4>
+
+        <p>
+          How a production optimiser uses statistics to estimate row counts.
+        </p>
+
+      </a>
+
+
       <a href="https://www.w3schools.com/sql/"
          target="_blank"
          class="reference-card">
@@ -781,7 +860,42 @@
 
       </a>
 
+
+      <a href="https://gate.iitkgp.ac.in/"
+         target="_blank"
+         class="reference-card">
+
+        <span>OFFICIAL PAPERS</span>
+
+        <h4>GATE Question Papers</h4>
+
+        <p>
+          Official GATE papers and answer keys for verifying exam questions.
+        </p>
+
+      </a>
+
     </div>
+
+  </div>
+
+
+  <!-- QUIZ CALL TO ACTION -->
+
+  <div class="quiz-cta">
+
+    <div>
+      <span class="eyebrow">TEST YOURSELF</span>
+      <h3>Interactive Quiz</h3>
+      <p>
+        Choose how many questions you want and pick a difficulty level.
+        Questions are drawn from a curated DBMS bank and from a generator
+        that builds new questions out of the live cost-model statistics.
+        You get instant feedback and a full explanation after every answer.
+      </p>
+    </div>
+
+    <button class="primary-button" id="quizBtnLearn" type="button">Start Quiz →</button>
 
   </div>
 
@@ -882,7 +996,8 @@
       <span>01</span>
       <h3>Enter SQL</h3>
       <p>
-        Enter a supported SELECT query into the SQL editor.
+        Type a SELECT query into the editor, or click Load Example for a
+        ready-made query that exercises every feature.
       </p>
     </article>
 
@@ -890,40 +1005,105 @@
       <span>02</span>
       <h3>Analyze Query</h3>
       <p>
-        Click Analyze Query. QueryLens parses the query and executes it
-        against its browser-side demonstration data.
+        Click Analyze Query, or press Ctrl and Enter together. QueryLens
+        parses the SQL and runs it against its in-browser dataset.
       </p>
     </article>
 
     <article class="help-step">
       <span>03</span>
-      <h3>Check Cost</h3>
+      <h3>Check the Score</h3>
       <p>
-        Review the score, estimated cost, execution time and rows returned.
+        The score runs from 1 to 100, where higher is cheaper. Read it
+        alongside the estimated cost, execution time and rows returned.
       </p>
     </article>
 
     <article class="help-step">
       <span>04</span>
-      <h3>Study Execution Plan</h3>
+      <h3>Read the Cardinality</h3>
       <p>
-        Examine detected scans, index searches, joins and temporary structures.
+        Selectivity is the fraction of rows your filter keeps. Estimated
+        Rows is how many survive. Index Used names the index column, or
+        reads "none" when a full scan is required.
       </p>
     </article>
 
     <article class="help-step">
       <span>05</span>
-      <h3>Read Recommendations</h3>
+      <h3>Study the Execution Plan</h3>
       <p>
-        Use the Optimization Advisor to identify possible improvements.
+        Each line shows one operator with its estimated rows, its cost and
+        its share of the total. The cost chart ranks the same operators so
+        you can see where the work concentrates.
       </p>
     </article>
 
     <article class="help-step">
       <span>06</span>
-      <h3>Download Report</h3>
+      <h3>Apply the Advice</h3>
       <p>
-        Download the analysis as text, document, JSON or printable PDF.
+        The Optimization Advisor explains what it found. Suggested Rewrites
+        gives copy-ready SQL and CREATE INDEX statements to run against
+        your own database.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>07</span>
+      <h3>Verify with Tests</h3>
+      <p>
+        Click Run Tests to execute built-in cases covering filters, joins,
+        aggregates, operator precedence and invalid input. Each case
+        asserts a specific expected outcome.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>08</span>
+      <h3>Download a Report</h3>
+      <p>
+        Use the Download menu for Text, Document, JSON or printable PDF.
+        The report records your input, the plan, the cost breakdown, the
+        recommendations and sample output rows.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>09</span>
+      <h3>Take the Quiz</h3>
+      <p>
+        Click QUIZ in the navigation bar, choose how many questions you
+        want and pick Easy, Medium or Hard. Answer one question at a time;
+        each is marked immediately with an explanation.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>10</span>
+      <h3>Practise Exam Questions</h3>
+      <p>
+        Open Competitive Exam, search or filter by topic, then select an
+        option on any question. The correct answer and a step-by-step
+        solution appear once you have chosen.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>11</span>
+      <h3>Switch Day or Night</h3>
+      <p>
+        Use the sun and moon button at the top right. Your choice is
+        remembered in this browser for next time.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>12</span>
+      <h3>Reuse Past Queries</h3>
+      <p>
+        Analysis History lists your ten most recent queries. Click any
+        entry to load and re-run it.
       </p>
     </article>
 
@@ -947,8 +1127,8 @@
       <details>
         <summary>Is QueryLens completely browser-based?</summary>
         <p>
-          Yes. This GitHub Pages version performs its processing using
-          JavaScript running in the user's browser.
+          Yes. All parsing, execution and costing run in JavaScript inside
+          your browser. Nothing is sent to a server.
         </p>
       </details>
 
@@ -956,27 +1136,74 @@
       <details>
         <summary>Does QueryLens use a real database server?</summary>
         <p>
-          No. The GitHub Pages version uses a generated demonstration
-          dataset stored in browser memory. It does not require Node.js,
-          SQLite or a server.
+          No. It generates a demonstration dataset in browser memory each
+          time the page loads. It requires no Node.js, SQLite or server.
         </p>
       </details>
 
 
       <details>
-        <summary>What SQL can I use?</summary>
+        <summary>What SQL is supported?</summary>
         <p>
-          QueryLens supports a useful subset of SELECT queries including
-          filtering, sorting, aggregation, grouping and common joins.
+          SELECT queries with WHERE, AND, OR, NOT, parentheses, IN,
+          BETWEEN, LIKE, IS NULL, JOIN and LEFT JOIN, GROUP BY, HAVING,
+          aggregates, DISTINCT, ORDER BY and LIMIT. Subqueries, UNION and
+          window functions are not supported and will be rejected.
         </p>
       </details>
 
 
       <details>
-        <summary>Is the cost score a database optimizer's actual cost?</summary>
+        <summary>Is the cost score a real optimizer's cost?</summary>
         <p>
-          No. It is an educational cost metric derived from the detected
-          characteristics of the submitted query.
+          No. It is an educational metric. The model estimates selectivity
+          from static table statistics and charges operators for page reads
+          and CPU work in the style of a real planner, but the numbers are
+          not produced by an actual database engine.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>Why do my row counts differ slightly from the examples?</summary>
+        <p>
+          The dataset is randomly regenerated on every page load, so exact
+          counts vary between sessions. Estimates assume a uniform
+          distribution, the same assumption a real planner makes when it
+          has no histogram.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>Does the CREATE INDEX suggestion actually create an index?</summary>
+        <p>
+          No. QueryLens has no DDL engine. The statement is advice to run
+          against your own database; re-analysing here will not change the
+          plan.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>How are the quiz questions produced?</summary>
+        <p>
+          They come from a curated bank of solved DBMS questions, topped up
+          by a generator that composes new questions from the live table
+          statistics, so the pool never runs out. The quiz does not call an
+          external AI service, because a browser-only site cannot hold an
+          API key securely.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>Are the competitive exam questions real past papers?</summary>
+        <p>
+          Not verbatim. Questions labelled with a GATE year paraphrase a
+          concept reported from that paper; questions labelled "GATE-style
+          Practice" are original. Verify any year label against the
+          official GATE papers before citing it.
         </p>
       </details>
 
@@ -984,7 +1211,8 @@
       <details>
         <summary>Where is analysis history stored?</summary>
         <p>
-          Recent analyses are stored in the browser's localStorage.
+          In this browser's localStorage. It is never uploaded, and Clear
+          History removes it.
         </p>
       </details>
 
@@ -992,12 +1220,105 @@
       <details>
         <summary>Can I save my analysis as a PDF?</summary>
         <p>
-          Yes. Select Print / Save PDF from the Download menu and choose
+          Yes. Choose Print / Save PDF from the Download menu, then select
           "Save as PDF" in your browser's print dialog.
         </p>
       </details>
 
     </div>
+
+  </div>
+
+</section>
+
+
+<!-- ================= COMPETITIVE EXAM ================= -->
+
+<section id="exam" class="section">
+
+  <div class="section-heading">
+
+    <div>
+
+      <span class="eyebrow">COMPETITIVE EXAM</span>
+
+      <h2>Solved Questions for GATE / PSU / UPSC</h2>
+
+      <p>
+        Fifty solved questions on SQL, joins, subqueries, NULL handling,
+        keys, normalization, indexing, transactions and query optimisation.
+        Choose an option on any question to check your answer and read a
+        step-by-step solution.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div class="panel">
+
+    <div class="panel-header">
+
+      <div class="panel-title">
+
+        <span class="panel-number">11</span>
+
+        <div>
+          <h3>Question Bank</h3>
+          <p id="examCount">Loading…</p>
+        </div>
+
+      </div>
+
+      <button class="secondary-button small" id="examDownloadBtn" type="button">
+        Download All
+      </button>
+
+    </div>
+
+
+    <div class="exam-controls">
+
+      <input
+        type="search"
+        id="examSearch"
+        class="exam-search"
+        placeholder="Search questions, tags or solutions…" />
+
+      <select id="examTopicFilter" class="exam-select">
+        <option value="all">All topics</option>
+        <option value="sql">SQL Basics</option>
+        <option value="joins">Joins &amp; Cardinality</option>
+        <option value="subqueries">Subqueries &amp; EXISTS</option>
+        <option value="aggregates">Aggregates &amp; GROUP BY</option>
+        <option value="nulls">NULL Handling</option>
+        <option value="constraints">Keys &amp; Constraints</option>
+        <option value="normalization">Normalization</option>
+        <option value="relational">Relational Algebra</option>
+        <option value="indexing">Indexing</option>
+        <option value="transactions">Transactions</option>
+        <option value="optimization">Query Optimisation</option>
+        <option value="selectivity">Selectivity</option>
+        <option value="cost">Cost Estimation</option>
+      </select>
+
+    </div>
+
+
+    <div class="exam-notice">
+      <strong>About the tags.</strong>
+      Questions labelled with a GATE year paraphrase a concept reported
+      from that paper; they are not verbatim past-paper questions.
+      Questions labelled “GATE-style Practice” are original. Verify any
+      year label against the official GATE question papers and answer keys
+      before citing it.
+    </div>
+
+
+    <div id="examProgress" class="exam-progress"></div>
+
+    <div id="examList" class="exam-list"></div>
 
   </div>
 
@@ -1031,6 +1352,79 @@
 </section>
 
 </main>
+
+
+<!-- ================= QUIZ MODAL ================= -->
+
+<div class="quiz-modal" id="quizModal">
+
+  <div class="quiz-dialog">
+
+    <button class="quiz-close" id="quizCloseBtn" type="button">✕</button>
+
+
+    <!-- SETUP -->
+
+    <div id="quizSetup">
+
+      <span class="eyebrow">QUIZ</span>
+
+      <h3>Configure your quiz</h3>
+
+      <p>Select the number of questions and a difficulty level.</p>
+
+
+      <label class="quiz-field">
+        <span>Number of questions</span>
+        <input type="number" id="quizCount" min="1" max="25" value="5" />
+      </label>
+
+
+      <label class="quiz-field">
+        <span>Difficulty level</span>
+        <select id="quizDifficulty">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </label>
+
+
+      <button class="primary-button" id="quizStartBtn" type="button">Begin Quiz</button>
+
+    </div>
+
+
+    <!-- PLAY -->
+
+    <div id="quizPlay" class="hidden">
+
+      <div class="quiz-progress" id="quizProgress"></div>
+
+      <h3 id="quizQuestion"></h3>
+
+      <span class="exam-tag" id="quizTag"></span>
+
+
+      <div id="quizOptions" class="quiz-options"></div>
+
+      <div id="quizFeedback" class="quiz-feedback hidden"></div>
+
+
+      <button class="primary-button small hidden" id="quizNextBtn" type="button">
+        Next Question
+      </button>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div id="quizSummary" class="hidden"></div>
+
+  </div>
+
+</div>
 
 
 <!-- ================= FOOTER ================= -->
@@ -1071,7 +1465,10 @@
 </footer>
 
 
+<script src="cost-model.js"></script>
+<script src="exam-bank.js"></script>
 <script src="script.js"></script>
+<script src="quiz.js"></script>
 
 </body>
 </html>
