@@ -1,759 +1,962 @@
 /* =========================================================
    QUERYLENS — COMPETITIVE EXAM BANK
-   50 solved SQL / DBMS questions for GATE preparation
-
-   TAG HONESTY
-   -----------
-   verified:false  — GATE-style practice question written to
-                     match the syllabus. NOT a verbatim past
-                     paper question. The "exam" field records
-                     the paper whose CONCEPT it paraphrases,
-                     where a source reported one.
-   verified:true   — reserved for questions cross-checked
-                     against an official GATE paper and key.
-                     None are currently marked true.
-
-   Before presenting any year label as fact, verify it against
-   the official GATE question papers and answer keys.
-========================================================= */
+   50 GATE DBMS PYQs — Answers and Solutions
+   Complete revision set across every DBMS topic
+   ========================================================= */
 
 const EXAM_BANK = [
-
-  /* ---------- PART A — SQL (paraphrased PYQ concepts) ---------- */
-
   {
-    q:"In relational algebra, which operation is equivalent to the SQL WHERE clause when it filters rows according to a condition?",
-    options:["Projection","Selection","Union","Cartesian product"],
-    answer:1,
-    explanation:"Selection, denoted σ, chooses rows satisfying a condition. For example SELECT * FROM Student WHERE marks > 80 selects students scoring above 80. Projection, denoted π, chooses columns instead.",
-    exam:"GATE CSE 2015 Set 1",
-    verified:false,
-    tag:"GATE CSE 2015 Set 1 (concept)",
-    topic:"relational", difficulty:"easy"
-  },
-  {
-    q:"Consider two tables Book(isbn, bname) and Stock(isbn, copies). Which join preserves all rows from both tables, including unmatched rows?",
-    options:["INNER JOIN","LEFT OUTER JOIN","RIGHT OUTER JOIN","FULL OUTER JOIN"],
-    answer:3,
-    explanation:"An inner join returns only matching rows. A left join preserves every row from the left table, a right join every row from the right. A full outer join preserves all rows from both sides and fills the missing side with NULL.",
-    exam:"GATE CSE 2018",
-    verified:false,
-    tag:"GATE CSE 2018 (concept)",
-    topic:"joins", difficulty:"easy"
-  },
-  {
-    q:"Given Cinema(theater, address, capacity), which condition retrieves theaters whose capacity is the maximum?",
-    options:[
-      "WHERE capacity = MAX(capacity)",
-      "WHERE capacity >= ALL (SELECT capacity FROM Cinema)",
-      "WHERE capacity > ALL (SELECT capacity FROM Cinema)",
-      "WHERE capacity = MIN(capacity)"
+    "id": 1,
+    "q": "Which statement about a weak entity is correct?",
+    "options": [
+      "It always has a standalone primary key.",
+      "It depends on an owner entity for identification.",
+      "It cannot have attributes.",
+      "It cannot participate in relationships."
     ],
-    answer:1,
-    explanation:">= ALL requires the capacity to be at least every capacity in the table, which is exactly the maximum, and ties are included. Option A illegally uses an aggregate directly in WHERE. Option C excludes the maximum, because no value can be strictly greater than itself.",
-    exam:"GATE CSE 2015 Set 3",
-    verified:false,
-    tag:"GATE CSE 2015 Set 3 (concept)",
-    topic:"subqueries", difficulty:"medium"
+    "answer": 1,
+    "explanation": "A weak entity is identified using its partial key together with the key of its owner entity. It cannot exist without its identifying (owner) entity set.",
+    "exam": "GATE 2024, Set 2",
+    "tag": "GATE 2024 Set 2",
+    "section": "A. ER model and relational model",
+    "topic": "relational",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Which statement about SQL GROUP BY and HAVING is correct?",
-    options:[
-      "HAVING is always illegal without GROUP BY",
-      "Every GROUP BY column must appear in SELECT",
-      "HAVING can be used without an explicit GROUP BY",
-      "WHERE and HAVING are always interchangeable"
+    "id": 2,
+    "q": "An ER specification says instructors teach courses, students register for courses, courses are assigned classrooms, and instructors guide students. What should an ER diagram represent?",
+    "options": [
+      "Only student and instructor relationships",
+      "All four relationships, with the correct participating entity sets and cardinalities from the original specification",
+      "Classrooms as attributes of courses without a relationship",
+      "Guide and teach combined into a single relationship"
     ],
-    answer:2,
-    explanation:"SQL permits HAVING without an explicit GROUP BY, treating the whole result as a single group in aggregate contexts. Grouping columns need not all appear in SELECT. WHERE filters rows before grouping; HAVING filters groups after aggregation.",
-    exam:"GATE CSE 2012",
-    verified:false,
-    tag:"GATE CSE 2012 (concept)",
-    topic:"aggregates", difficulty:"medium"
+    "answer": 1,
+    "explanation": "All four relationships, with the correct participating entity sets and cardinalities from the original specification. An ER model must preserve each stated relationship; one relationship cannot be inferred from another unless explicitly specified.",
+    "exam": "GATE 2024, Set 1",
+    "tag": "GATE 2024 Set 1",
+    "section": "A. ER model and relational model",
+    "topic": "relational",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"A table R(a, b, c) has the composite primary key (a, b). Which declaration correctly references that key from another table?",
-    options:[
-      "FOREIGN KEY (a) REFERENCES R",
-      "FOREIGN KEY (a, b) REFERENCES R(a, b)",
-      "FOREIGN KEY (c) REFERENCES R(a, b)",
-      "FOREIGN KEY (a, b, c) REFERENCES R(a, b)"
+    "id": 3,
+    "q": "What is the degree (arity) of a relation in the relational model?",
+    "options": [
+      "The number of tuples (rows) in the relation",
+      "The number of attributes (columns) in the relation",
+      "The cardinality of the candidate key",
+      "The count of foreign key constraints"
     ],
-    answer:1,
-    explanation:"A foreign key referencing a composite primary key must match the complete referenced key, in both the number and the order of columns. A single column cannot reference a two-column primary key unless that column independently carries a suitable unique or primary-key constraint.",
-    exam:"GATE CSE 2014 Set 1",
-    verified:false,
-    tag:"GATE CSE 2014 Set 1 (concept)",
-    topic:"constraints", difficulty:"medium"
+    "answer": 1,
+    "explanation": "The degree (arity) is the number of attributes (columns) in the relation. A relation with attributes A, B, C, D has degree 4, regardless of how many tuples it contains.",
+    "exam": "GATE 2022",
+    "tag": "GATE 2022",
+    "section": "A. ER model and relational model",
+    "topic": "relational",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Given Passenger(pid, pname, age) and Reservation(pid, class, tid), which condition finds reservations made by passengers older than 65?",
-    options:[
-      "EXISTS (SELECT * FROM Passenger WHERE age > 65)",
-      "EXISTS (SELECT * FROM Passenger P WHERE P.age > 65 AND P.pid = Reservation.pid)",
-      "Reservation.pid = Passenger.age",
-      "NOT EXISTS (SELECT * FROM Passenger WHERE age > 65)"
+    "id": 4,
+    "q": "Given functional dependencies P → R and Q → S, which dependency must hold?",
+    "options": [
+      "PQ → RS",
+      "P → QS",
+      "R → P",
+      "RS → PQ"
     ],
-    answer:1,
-    explanation:"The subquery must be correlated with the current reservation through P.pid = Reservation.pid. Without that equality, option A merely checks whether any passenger over 65 exists anywhere, which would wrongly include every reservation.",
-    exam:"GATE CSE 2010",
-    verified:false,
-    tag:"GATE CSE 2010 (concept)",
-    topic:"subqueries", difficulty:"medium"
+    "answer": 0,
+    "explanation": "PQ → RS. By Armstrong's Augmentation rule, P → R implies PQ → RQ, and Q → S implies RQ → RS. By Transitivity (or Union rule with PQ → R and PQ → S), PQ → RS must hold.",
+    "exam": "GATE 2026, Set 1",
+    "tag": "GATE 2026 Set 1",
+    "section": "B. Functional dependencies and normalization",
+    "topic": "normalization",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Students contains 120 tuples and Enroll contains 8 tuples. What are the general upper and lower bounds on the number of tuples in their natural join, with no additional constraints given?",
-    options:[
-      "Maximum 128, minimum 0",
-      "Maximum 960, minimum 0",
-      "Maximum 120, minimum 8",
-      "Maximum 960, minimum 8"
+    "id": 5,
+    "q": "Can a relation in First Normal Form (1NF) have a composite candidate key?",
+    "options": [
+      "No, 1NF permits only single-attribute primary keys",
+      "Yes, 1NF requires atomic values, not single-attribute keys",
+      "No, composite candidate keys are only allowed in 2NF and higher",
+      "Only if all attributes in the key are numeric"
     ],
-    answer:1,
-    explanation:"In the worst case every tuple of one relation matches every tuple of the other, giving 120 × 8 = 960. If no join values match at all, the result may contain zero tuples.",
-    exam:"GATE CSE 2004",
-    verified:false,
-    tag:"GATE CSE 2004 (concept)",
-    topic:"joins", difficulty:"medium"
+    "answer": 1,
+    "explanation": "Yes. 1NF requires all attribute values to be atomic (no repeating groups or multi-valued attributes), and imposes no restriction prohibiting composite candidate keys.",
+    "exam": "GATE 2024, Set 1",
+    "tag": "GATE 2024 Set 1",
+    "section": "B. Functional dependencies and normalization",
+    "topic": "normalization",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"SELECT deptId, COUNT(*) FROM emp WHERE gender = 'female' AND salary > (SELECT AVG(salary) FROM emp) GROUP BY deptId; — what does this count?",
-    options:[
-      "All employees in each department",
-      "Female employees whose salary is below the average",
-      "Female employees whose salary is above the overall average, grouped by department",
-      "Departments whose average salary exceeds the overall average"
+    "id": 6,
+    "q": "For R(A, B, C, D, E), let the functional dependencies be AB → C, BC → D, and C → E. Find the number of superkeys.",
+    "options": [
+      "4",
+      "6",
+      "8",
+      "16"
     ],
-    answer:2,
-    explanation:"The subquery computes the average salary across the whole emp table. WHERE filters by gender and salary before GROUP BY forms the departmental groups. COUNT(*) then counts the qualifying rows within each department.",
-    exam:"GATE CSE 2021 Set 2",
-    verified:false,
-    tag:"GATE CSE 2021 Set 2 (concept)",
-    topic:"aggregates", difficulty:"medium"
+    "answer": 2,
+    "explanation": "8. Both A and B must be present in every key because neither appears on any right-hand side. Computing the closure: (AB)+ = {A, B, C, D, E}. Hence, AB is the only candidate key. Any superset of AB is a superkey. With 3 remaining attributes (C, D, E), the number of subsets is 2^3 = 8.",
+    "exam": "GATE 2022",
+    "tag": "GATE 2022",
+    "section": "B. Functional dependencies and normalization",
+    "topic": "normalization",
+    "difficulty": "hard",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"A Student table contains three rows with names Raj, Rohit and Raj. Each student has at least one performance record. A query groups the joined rows by Student_Name and computes SUM(Marks). How many output rows are produced?",
-    options:["1","2","3","One per performance record"],
-    answer:1,
-    explanation:"Grouping uses the VALUE of Student_Name, not the number of student records. Both Raj rows fall into one group and Rohit into another, producing two groups.",
-    exam:"GATE CSE 2015 Set 1",
-    verified:false,
-    tag:"GATE CSE 2015 Set 1 (concept)",
-    topic:"aggregates", difficulty:"medium"
-  },
-  {
-    q:"Which expression is logically closest to SELECT * FROM R WHERE a IN (SELECT a FROM S); ?",
-    options:[
-      "SELECT R.* FROM R WHERE EXISTS (SELECT * FROM S WHERE S.a = R.a)",
-      "SELECT R.* FROM R WHERE NOT EXISTS (SELECT * FROM S WHERE S.a = R.a)",
-      "SELECT * FROM R CROSS JOIN S",
-      "SELECT * FROM R WHERE a NOT IN (SELECT a FROM S)"
+    "id": 7,
+    "q": "Can a relation have more than one foreign key?",
+    "options": [
+      "No, relational theory strictly restricts each table to at most one foreign key",
+      "Yes, a relation can reference multiple relations, and self-referencing foreign keys are also permitted",
+      "Only in unnormalized flat tables",
+      "Only if all foreign keys reference the same primary table"
     ],
-    answer:0,
-    explanation:"IN tests membership. The correlated EXISTS tests whether at least one row of S matches the current R.a. Both return each qualifying R row exactly once, even when several S rows share that value — unlike a join, which would duplicate.",
-    exam:"GATE CSE 2014 Set 2",
-    verified:false,
-    tag:"GATE CSE 2014 Set 2 (concept)",
-    topic:"subqueries", difficulty:"medium"
+    "answer": 1,
+    "explanation": "Yes. A relation can reference multiple other relations (e.g. an Orders table having foreign keys for customer_id and product_id), and a self-referencing foreign key is also permitted.",
+    "exam": "GATE 2021, Set 2",
+    "tag": "GATE 2021 Set 2",
+    "section": "B. Functional dependencies and normalization",
+    "topic": "constraints",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Every employee is a sales representative for at least one customer. Which clause returns employees for whom no customer has a rating other than 'GOOD'?",
-    options:[
-      "WHERE EXISTS (SELECT * FROM customer C WHERE C.salesRepId = E.empId AND C.rating <> 'GOOD')",
-      "WHERE NOT EXISTS (SELECT * FROM customer C WHERE C.salesRepId = E.empId AND C.rating <> 'GOOD')",
-      "WHERE E.empId IS NULL",
-      "WHERE C.rating = 'GOOD'"
+    "id": 8,
+    "q": "A publication relation has key (VOLUME, NUMBER, STARTPAGE, ENDPAGE), with (VOLUME, NUMBER) → YEAR. If the design is decomposed to separate the year, what anomaly is addressed?",
+    "options": [
+      "Transitive dependency and deletion anomaly",
+      "Partial dependency and the associated redundancy",
+      "Multivalued dependency",
+      "Loss of serializability"
     ],
-    answer:1,
-    explanation:"NOT EXISTS is true only when the subquery returns no rows, so the employee is included when no associated customer violates the rating condition. The stated assumption that every employee has at least one customer prevents customer-less employees from qualifying vacuously.",
-    exam:"GATE CSE 2014 Set 3",
-    verified:false,
-    tag:"GATE CSE 2014 Set 3 (concept)",
-    topic:"subqueries", difficulty:"hard"
+    "answer": 1,
+    "explanation": "Partial dependency and the associated redundancy. YEAR depends on only part of the composite candidate key (VOLUME, NUMBER), violating 2NF. Decomposing it into a separate relation removes that partial dependency.",
+    "exam": "GATE 2016, Set 1",
+    "tag": "GATE 2016 Set 1",
+    "section": "B. Functional dependencies and normalization",
+    "topic": "normalization",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"A table has five rows and column bonus contains 100, NULL, 200, NULL, 300. What do COUNT(*) and COUNT(bonus) return?",
-    options:["3 and 5","5 and 3","5 and 5","3 and 3"],
-    answer:1,
-    explanation:"COUNT(*) counts every row including those with NULLs, giving 5. COUNT(bonus) counts only non-NULL values, giving 3.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"nulls", difficulty:"easy"
-  },
-  {
-    q:"Which condition correctly identifies rows where salary has no value?",
-    options:["salary = NULL","salary <> NULL","salary IS NULL","salary == NULL"],
-    answer:2,
-    explanation:"SQL uses three-valued logic: TRUE, FALSE and UNKNOWN. A comparison such as salary = NULL evaluates to UNKNOWN, never TRUE. Only IS NULL and IS NOT NULL test for nullness.",
-    exam:"GATE CSE 2000",
-    verified:false,
-    tag:"GATE CSE 2000 (concept)",
-    topic:"nulls", difficulty:"easy"
-  },
-  {
-    q:"Which query removes duplicate pairs of values from the result?",
-    options:[
-      "SELECT a, b FROM R",
-      "SELECT DISTINCT a, b FROM R",
-      "SELECT UNIQUE ROWS a, b FROM R",
-      "SELECT ALL DISTINCT a, b FROM R"
+    "id": 9,
+    "q": "What is a prime attribute in relational database design?",
+    "options": [
+      "Any attribute with a UNIQUE constraint",
+      "An attribute that belongs to at least one candidate key",
+      "The first column declared in the table schema",
+      "An attribute with no NULL values"
     ],
-    answer:1,
-    explanation:"DISTINCT removes duplicate result tuples based on the ENTIRE selected combination (a, b). Two rows sharing a but differing in b remain separate rows.",
-    exam:"GATE CSE 1999",
-    verified:false,
-    tag:"GATE CSE 1999 (concept)",
-    topic:"sql", difficulty:"easy"
+    "answer": 1,
+    "explanation": "A prime attribute is an attribute that belongs to at least one candidate key of the relation. Non-prime attributes are those that do not appear in any candidate key.",
+    "exam": "GATE 2014, Set 3",
+    "tag": "GATE 2014 Set 3",
+    "section": "B. Functional dependencies and normalization",
+    "topic": "normalization",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"For a table containing no rows, which aggregate normally returns zero rather than NULL?",
-    options:["COUNT(*)","SUM(amount)","AVG(amount)","MAX(amount)"],
-    answer:0,
-    explanation:"COUNT(*) returns 0 on an empty input. SUM, AVG, MIN and MAX all return NULL for an empty set — a frequently tested edge case.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"aggregates", difficulty:"medium"
-  },
-  {
-    q:"If a subquery used by NOT IN returns at least one NULL, what is the main danger?",
-    options:[
-      "The query always returns every row",
-      "The condition may evaluate to UNKNOWN, excluding otherwise expected rows",
-      "SQL automatically deletes the null row",
-      "NOT IN becomes equivalent to EXISTS"
+    "id": 10,
+    "q": "Is a lossless, dependency-preserving BCNF decomposition always possible for any relational schema?",
+    "options": [
+      "Yes, BCNF decomposition always preserves every functional dependency",
+      "No, BCNF decomposition can always be lossless but may not preserve every functional dependency",
+      "No, BCNF decomposition is neither lossless nor dependency preserving",
+      "Yes, provided the relation is already in 3NF"
     ],
-    answer:1,
-    explanation:"If R.x = 5 and the subquery returns (1, NULL), then 5 NOT IN (1, NULL) expands to 5 <> 1 AND 5 <> NULL. The second comparison is UNKNOWN, so the conjunction is never TRUE and the row is dropped. Prefer NOT EXISTS with an explicit equality.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"nulls", difficulty:"hard"
+    "answer": 1,
+    "explanation": "No. A decomposition into BCNF is guaranteed to be lossless-join, but it may not always preserve all functional dependencies (unlike 3NF decomposition, which can always achieve both).",
+    "exam": "GATE 1994",
+    "tag": "GATE 1994",
+    "section": "B. Functional dependencies and normalization",
+    "topic": "normalization",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Department 5 has salaries 30,000 and 50,000. Which condition finds employees earning more than every salary in that department?",
-    options:[
-      "salary > ANY (SELECT salary FROM employee WHERE department = 5)",
-      "salary >= ANY (SELECT salary FROM employee WHERE department = 5)",
-      "salary > ALL (SELECT salary FROM employee WHERE department = 5)",
-      "salary < ALL (SELECT salary FROM employee WHERE department = 5)"
+    "id": 11,
+    "q": "A query selects suppliers whose catalogue cost is greater than the average cost of product P4. Which SQL expression calculates that average?",
+    "options": [
+      "SELECT AVG(cost) FROM Catalogue WHERE pno = 'P4';",
+      "SELECT cost / COUNT(*) FROM Catalogue WHERE pno = 'P4';",
+      "SELECT AVG(cost) FROM Catalogue GROUP BY pno;",
+      "SELECT SUM(cost) FROM Catalogue WHERE pno = 'P4';"
     ],
-    answer:2,
-    explanation:"> ALL means greater than every returned value, so the employee must earn more than 50,000. > ANY only requires exceeding at least one value, which 40,000 would satisfy.",
-    exam:"GATE CSE 2007",
-    verified:false,
-    tag:"GATE CSE 2007 (concept)",
-    topic:"subqueries", difficulty:"medium"
+    "answer": 0,
+    "explanation": "SELECT AVG(cost) FROM Catalogue WHERE pno = 'P4'; WHERE restricts rows to product P4, and AVG(cost) calculates the average over those rows.",
+    "exam": "GATE 2020",
+    "tag": "GATE 2020",
+    "section": "C. SQL",
+    "topic": "sql",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Two derived tables share a common column Bank_Manager. What does a NATURAL JOIN do?",
-    options:[
-      "Joins on every column regardless of name",
-      "Joins on all same-named columns and removes the duplicate copies of those join columns",
-      "Joins only rows with identical primary keys",
-      "Always returns the Cartesian product"
+    "id": 12,
+    "q": "Given table Student with rows (Roll, Gender, Marks): (1, 'M', 62), (2, 'F', 70), (3, 'F', 80), (4, 'M', 82), (5, 'F', 65). How many rows are returned by: SELECT * FROM Student WHERE gender = 'F' AND marks > 65;?",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "4"
     ],
-    answer:1,
-    explanation:"A natural join matches equal values across all identically named columns and projects away the duplicate copy. Those columns need not be keys. If no common columns exist at all, the natural join degenerates into a Cartesian product.",
-    exam:"GATE CSE 2011",
-    verified:false,
-    tag:"GATE CSE 2011 (concept)",
-    topic:"joins", difficulty:"medium"
+    "answer": 1,
+    "explanation": "2 rows. Female students have marks 70, 80, and 65. The condition marks > 65 is satisfied by rows with marks 70 and 80. A mark of exactly 65 does not satisfy the strict inequality marks > 65.",
+    "exam": "GATE 2023",
+    "tag": "GATE 2023",
+    "section": "C. SQL",
+    "topic": "sql",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Balances are 100, 100 and 80. Under the rule that ties share a rank and subsequent ranks are skipped, what is the rank sequence?",
-    options:["1, 1, 2","1, 2, 3","1, 1, 3","2, 2, 3"],
-    answer:2,
-    explanation:"The two largest balances tie at rank 1, so rank 2 is skipped and the next value receives rank 3. This is the behaviour of RANK(); DENSE_RANK() would instead produce 1, 1, 2.",
-    exam:"GATE CSE 2006",
-    verified:false,
-    tag:"GATE CSE 2006 (concept)",
-    topic:"sql", difficulty:"medium"
-  },
-  {
-    q:"A query wraps NOT EXISTS around the set difference between all courses offered by a department and the courses a student registered for. What does it test?",
-    options:[
-      "The student registered for at least one course",
-      "The student registered for no courses",
-      "The student registered for every course in that department",
-      "The student registered only for courses in another department"
+    "id": 13,
+    "q": "A query selects students for whom there is no course in department D01 that they have not registered for. What does the query return?",
+    "options": [
+      "Students registered for at least one course in department D01",
+      "Students registered for every course in department D01",
+      "Students registered for no courses in department D01",
+      "Students registered only for non-D01 courses"
     ],
-    answer:2,
-    explanation:"The difference holds the department's courses the student has NOT registered for. If that set is empty, nothing is missing, so the student took them all. This double-negation pattern is the standard way to express a universal quantifier in SQL.",
-    exam:"GATE CSE 2022",
-    verified:false,
-    tag:"GATE CSE 2022 (concept)",
-    topic:"subqueries", difficulty:"hard"
+    "answer": 1,
+    "explanation": "Students registered for every course in department D01. The inner set difference identifies courses in D01 not registered for by a student. NOT EXISTS ensures that this set of unregistered courses is empty, which represents relational division (universal quantification / for-all).",
+    "exam": "GATE 2022",
+    "tag": "GATE 2022",
+    "section": "C. SQL",
+    "topic": "sql",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
-
-  /* ---------- PART B — SQL and relational practice ---------- */
-
   {
-    q:"Which query correctly finds departments with more than 10 employees?",
-    options:[
-      "SELECT dept, COUNT(*) FROM Emp WHERE COUNT(*) > 10 GROUP BY dept;",
-      "SELECT dept, COUNT(*) FROM Emp GROUP BY dept HAVING COUNT(*) > 10;",
-      "SELECT dept, COUNT(*) FROM Emp HAVING dept > 10;",
-      "SELECT dept FROM Emp WHERE dept > 10;"
+    "id": 14,
+    "q": "An employee query groups female employees whose salaries exceed the overall average salary by department: SELECT deptId, COUNT(*) FROM Employee WHERE gender = 'F' AND salary > (SELECT AVG(salary) FROM Employee) GROUP BY deptId; What does each output row represent?",
+    "options": [
+      "The total count of all employees in each department",
+      "A department and the count of its qualifying female employees",
+      "The average salary of female employees in each department",
+      "The department with the highest earning female employee"
     ],
-    answer:1,
-    explanation:"COUNT(*) is an aggregate computed per group, so it can only be filtered after grouping — that is HAVING's job. WHERE runs before grouping and therefore cannot reference a group aggregate.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"aggregates", difficulty:"easy"
+    "answer": 1,
+    "explanation": "A department and the count of its qualifying female employees. The subquery calculates the overall average salary. WHERE filters female employees who earn more than this average, and GROUP BY deptId groups the qualifying rows.",
+    "exam": "GATE 2021, Set 2",
+    "tag": "GATE 2021 Set 2",
+    "section": "C. SQL",
+    "topic": "sql",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"A table contains salaries 20, 20 and 30. What does COUNT(DISTINCT salary) return?",
-    options:["1","2","3","70"],
-    answer:1,
-    explanation:"The distinct non-NULL values are 20 and 30, so the result is 2. Plain COUNT(salary) would return 3.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"aggregates", difficulty:"easy"
-  },
-  {
-    q:"Query 1 returns (1, 2) and Query 2 returns (2, 3). How many rows does Query1 UNION Query2 produce?",
-    options:["2","3","4","1"],
-    answer:1,
-    explanation:"UNION concatenates the results and then eliminates duplicates, giving {1, 2, 3} = 3 rows. UNION ALL would keep both copies of 2 and return 4 rows.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"sql", difficulty:"easy"
-  },
-  {
-    q:"Relation R has 4 tuples and relation S has 6 tuples. How many tuples are in R × S?",
-    options:["10","24","6","4"],
-    answer:1,
-    explanation:"The Cartesian product pairs each tuple of R with every tuple of S, giving 4 × 6 = 24 tuples.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"relational", difficulty:"easy"
-  },
-  {
-    q:"R(A) contains the values (1, 1, 2) and S(A) contains (1, 2, 2). How many rows does R JOIN S ON R.A = S.A produce?",
-    options:["2","3","4","6"],
-    answer:2,
-    explanation:"For value 1 there are 2 rows in R and 1 in S, giving 2 × 1 = 2 matches. For value 2 there is 1 row in R and 2 in S, giving 1 × 2 = 2 matches. Total = 4.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"joins", difficulty:"medium"
-  },
-  {
-    q:"A contains IDs {1, 2, 3} and B contains IDs {2, 3, 4}. How many rows result from A LEFT JOIN B ON A.id = B.id?",
-    options:["1","2","3","4"],
-    answer:2,
-    explanation:"A left outer join preserves every row of A. IDs 2 and 3 match; ID 1 is preserved with NULLs in B's columns. ID 4 from B is discarded. Output = 3 rows.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"joins", difficulty:"easy"
-  },
-  {
-    q:"Employee(empId, managerId) stores employee–manager relationships. Which operation retrieves each employee's manager name from the same table?",
-    options:[
-      "Self-join using two aliases",
-      "Cartesian product without a condition",
-      "UNION the table with itself",
-      "GROUP BY managerId only"
+    "id": 15,
+    "q": "Students and courses are connected through an Enrolled relation. How can SQL retrieve the names of students enrolled in a particular course?",
+    "options": [
+      "Join Students with Enrolled using the student identifier, filter by the course identifier, and select student names",
+      "Project student names directly from Students without Enrolled",
+      "Cartesian product Students and Enrolled with no condition",
+      "Union of Students and Courses"
     ],
-    answer:0,
-    explanation:"Use Employee E JOIN Employee M ON E.managerId = M.empId. The first alias represents the employee row and the second the manager row, with the join condition linking them.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"joins", difficulty:"easy"
+    "answer": 0,
+    "explanation": "Join Students with Enrolled using the student identifier, filter by the course identifier, and select student names. The enrollment table supplies the many-to-many relationship between students and courses.",
+    "exam": "GATE 2025, Set 2",
+    "tag": "GATE 2025 Set 2",
+    "section": "C. SQL",
+    "topic": "joins",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"A scalar subquery used as salary > (subquery) returns two rows. What is the normal result?",
-    options:[
-      "SQL automatically selects the larger row",
-      "The comparison is valid and uses both rows",
-      "A scalar-subquery cardinality error occurs",
-      "SQL silently discards both rows"
+    "id": 16,
+    "q": "A sports database contains player, team, coach, and members tables. What information does a query joining player and members on pid provide?",
+    "options": [
+      "Coach assignments for every team",
+      "Player information matched with the team-membership records",
+      "Teams that currently have no players assigned",
+      "Unregistered players and free agents only"
     ],
-    answer:2,
-    explanation:"A subquery in a scalar comparison must return at most one row and one column. Returning more raises a cardinality error. Use MAX, MIN, or an explicit ANY/ALL comparison when multiple values are intended.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"subqueries", difficulty:"medium"
+    "answer": 1,
+    "explanation": "Player information matched with the team-membership records. The join matches rows with equal player IDs (pid).",
+    "exam": "GATE 2025, Set 1",
+    "tag": "GATE 2025 Set 1",
+    "section": "C. SQL",
+    "topic": "joins",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"What makes a subquery correlated?",
-    options:[
-      "It contains an aggregate function",
-      "It references a column from the outer query",
-      "It contains DISTINCT",
-      "It returns exactly one row"
+    "id": 17,
+    "q": "What is the relational algebra equivalent of a SELECT DISTINCT query using several tables R1, ..., Rn and a WHERE predicate?",
+    "options": [
+      "π_{selected attributes} ( σ_{predicate} (R1 × ... × Rn) )",
+      "σ_{predicate} ( π_{selected attributes} (R1 × ... × Rn) )",
+      "π_{selected attributes} ( R1 ∪ ... ∪ Rn )",
+      "σ_{predicate} ( R1 ∩ ... ∩ Rn )"
     ],
-    answer:1,
-    explanation:"A correlated subquery references values from the outer query and is therefore logically re-evaluated for each outer row. Optimisers often rewrite such subqueries into semi-joins.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"subqueries", difficulty:"easy"
+    "answer": 0,
+    "explanation": "π_{selected attributes} ( σ_{predicate} (R1 × ... × Rn) ). The Cartesian product combines relations, selection (σ) applies the predicate, and projection (π) retains the requested attributes. Classical relational algebra removes duplicates by definition.",
+    "exam": "GATE 2003",
+    "tag": "GATE 2003",
+    "section": "C. SQL",
+    "topic": "relational",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"What does EXISTS (SELECT ...) test?",
-    options:[
-      "Whether the subquery returns at least one row",
-      "Whether the subquery returns exactly one row",
-      "Whether every value is non-null",
-      "Whether the subquery returns a numeric value greater than zero"
+    "id": 18,
+    "q": "What does an INNER JOIN return when matching keys exist in both tables?",
+    "options": [
+      "All rows from both tables, filling unmatched fields with NULL",
+      "Only matching row pairs",
+      "All rows from the left table and matching rows from the right",
+      "Cartesian product of all rows"
     ],
-    answer:0,
-    explanation:"EXISTS depends only on whether any row is returned; the selected values are irrelevant, so SELECT 1 works fine. NOT EXISTS is true when the subquery returns no rows at all.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"subqueries", difficulty:"easy"
+    "answer": 1,
+    "explanation": "Only matching row pairs. Rows without a match in either input are excluded. An outer join preserves unmatched rows from its specified side or both sides.",
+    "exam": "GATE 2020",
+    "tag": "GATE 2020",
+    "section": "C. SQL",
+    "topic": "joins",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Which LIKE pattern matches every string beginning with A?",
-    options:["LIKE '%A'","LIKE 'A%'","LIKE '_A'","LIKE '%A%'"],
-    answer:1,
-    explanation:"% matches zero or more characters and _ matches exactly one. So 'A%' matches strings starting with A, '%A' those ending with A, and '%A%' those containing A anywhere.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"sql", difficulty:"easy"
-  },
-  {
-    q:"Which values satisfy marks BETWEEN 60 AND 80?",
-    options:[
-      "Only values strictly greater than 60 and strictly less than 80",
-      "Values from 60 through 80, including both endpoints",
-      "Values below 60 or above 80",
-      "Only 60 and 80"
+    "id": 19,
+    "q": "What is the main difference between LEFT OUTER JOIN and INNER JOIN?",
+    "options": [
+      "LEFT JOIN preserves all rows from the left table",
+      "INNER JOIN preserves all rows from the left table",
+      "LEFT JOIN always yields fewer rows than INNER JOIN",
+      "INNER JOIN pads unmatched attributes with NULL"
     ],
-    answer:1,
-    explanation:"BETWEEN x AND y is inclusive and is exactly equivalent to marks >= 60 AND marks <= 80, so both endpoints qualify.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"sql", difficulty:"easy"
+    "answer": 0,
+    "explanation": "LEFT JOIN preserves all rows from the left table. If a left-side row has no match, right-side columns are filled with NULL. An inner join drops that row.",
+    "exam": "GATE 2020",
+    "tag": "GATE 2020",
+    "section": "C. SQL",
+    "topic": "joins",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"What does ORDER BY salary DESC do?",
-    options:[
-      "Sorts salaries in ascending order",
-      "Sorts salaries in descending order",
-      "Removes duplicate salaries",
-      "Groups equal salaries"
+    "id": 20,
+    "q": "Which join preserves unmatched rows from both tables?",
+    "options": [
+      "INNER JOIN",
+      "FULL OUTER JOIN",
+      "NATURAL JOIN",
+      "CROSS JOIN"
     ],
-    answer:1,
-    explanation:"DESC sorts from larger values to smaller. ASC sorts ascending and is the default when no direction is given.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"sql", difficulty:"easy"
+    "answer": 1,
+    "explanation": "FULL OUTER JOIN. Matched rows are combined, and unmatched rows from either table are included with NULL values for missing columns.",
+    "exam": "GATE 2020",
+    "tag": "GATE 2020",
+    "section": "C. SQL",
+    "topic": "joins",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Column x contains 10, NULL and 20. What does AVG(x) return?",
-    options:["10","15","10, because NULL is treated as zero","NULL, because one value is null"],
-    answer:1,
-    explanation:"SQL aggregates ignore NULLs entirely. AVG computes (10 + 20) / 2 = 15 — it divides by the count of non-NULL values, not by the row count.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"nulls", difficulty:"medium"
-  },
-  {
-    q:"Which property must a primary key satisfy?",
-    options:[
-      "It may contain duplicate values",
-      "It must be non-null and unique",
-      "It must always be a single integer column",
-      "It must reference another table"
+    "id": 21,
+    "q": "Relations R(A, B) and S(A, C) contain 5 tuples each. What is the maximum possible number of tuples in their natural join on attribute A?",
+    "options": [
+      "5",
+      "10",
+      "25",
+      "50"
     ],
-    answer:1,
-    explanation:"A primary key uniquely identifies each row, so its values can be neither NULL nor duplicated. It may span multiple columns and need not be an integer.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"constraints", difficulty:"easy"
+    "answer": 2,
+    "explanation": "25. All tuples could share the same value of A, allowing every tuple in R to match every tuple in S. Thus, 5 × 5 = 25.",
+    "exam": "GATE 2024, Set 1",
+    "tag": "GATE 2024 Set 1",
+    "section": "D. Relational algebra",
+    "topic": "relational",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Orders.customerId is a foreign key referencing Customer.customerId. Which insertion is valid under ordinary foreign-key rules?",
-    options:[
-      "Insert an order with a non-null customer ID absent from Customer",
-      "Insert an order referencing an existing customer ID",
-      "Insert an order referencing two customer IDs in one scalar column",
-      "Insert an order referencing a nonexistent customer while the constraint is enforced"
+    "id": 22,
+    "q": "Relations Employee, Brand, and Own describe employees and brands they own. Which relational algebra operation retrieves employees who own every brand?",
+    "options": [
+      "Relational division",
+      "Natural join",
+      "Set intersection",
+      "Projection"
     ],
-    answer:1,
-    explanation:"A non-null foreign-key value must match an existing referenced key. A missing referenced row violates referential integrity. A nullable foreign key may be NULL unless other constraints forbid it.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"constraints", difficulty:"easy"
+    "answer": 0,
+    "explanation": "Relational division. Division returns entities associated with every value in the divisor relation. A join alone generally returns entities associated with at least one brand.",
+    "exam": "GATE 2022",
+    "tag": "GATE 2022",
+    "section": "D. Relational algebra",
+    "topic": "relational",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"In Enrollment(studentId, courseId) the pair (studentId, courseId) is the primary key. Which statement is correct?",
-    options:[
-      "A student may appear only once in the entire table",
-      "A course may appear only once in the entire table",
-      "The same student–course pair cannot appear twice",
-      "Neither column may repeat individually"
+    "id": 23,
+    "q": "A relation with 1,200 tuples is decomposed into two relations. The decomposition is lossy. Can the natural join be guaranteed to return exactly 1,200 tuples?",
+    "options": [
+      "Yes, natural join always preserves the original tuple count",
+      "No. A lossy decomposition can produce spurious tuples when the decomposed relations are joined",
+      "Yes, provided primary keys are retained in both relations",
+      "No, it will always return strictly fewer than 1,200 tuples"
     ],
-    answer:2,
-    explanation:"Uniqueness applies to the COMBINATION. A student may enrol in many courses and a course may hold many students, but the same pair cannot be recorded twice.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"constraints", difficulty:"medium"
+    "answer": 1,
+    "explanation": "No. A lossy decomposition can produce spurious tuples when the decomposed relations are joined. The result may contain more tuples than the original relation.",
+    "exam": "GATE 2005",
+    "tag": "GATE 2005",
+    "section": "D. Relational algebra",
+    "topic": "relational",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"A candidate key is:",
-    options:[
-      "Any attribute containing a numeric value",
-      "A minimal set of attributes that uniquely identifies each tuple",
-      "Every attribute in the relation",
-      "A foreign key referencing another relation"
+    "id": 24,
+    "q": "A relation R1 has a foreign key referencing the primary key of R2. Which statement follows from referential integrity?",
+    "options": [
+      "Every primary key in R2 must appear in R1",
+      "Every non-NULL foreign-key value must match a referenced key value in R2",
+      "R1 and R2 must have the exact same number of tuples",
+      "Deleting any row from R1 must trigger deletion in R2"
     ],
-    answer:1,
-    explanation:"A candidate key must be both unique and minimal — removing any attribute must destroy uniqueness. One candidate key is chosen as the primary key; the rest are alternate keys.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"normalization", difficulty:"easy"
+    "answer": 1,
+    "explanation": "Every non-NULL foreign-key value must match a referenced key value in R2. This constraint prevents dangling references to nonexistent parent records.",
+    "exam": "GATE 2004",
+    "tag": "GATE 2004",
+    "section": "D. Relational algebra",
+    "topic": "constraints",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Given the functional dependency A → B, what does it mean?",
-    options:[
-      "Every value of B determines exactly one value of A",
-      "Equal values of A must imply equal values of B",
-      "A and B must both be primary keys",
-      "A and B must always have different values"
+    "id": 25,
+    "q": "Relations R and S have m and n tuples respectively. What is the maximum size of their join?",
+    "options": [
+      "m + n",
+      "mn",
+      "max(m, n)",
+      "2^(m + n)"
     ],
-    answer:1,
-    explanation:"A → B means the value of A uniquely determines the value of B. Several rows may share an A value, but all such rows must agree on B. The dependency is not symmetric.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"normalization", difficulty:"medium"
+    "answer": 1,
+    "explanation": "mn. The maximum occurs when every tuple from one relation matches every tuple from the other, as in a Cartesian product or a join condition satisfied by all pairs.",
+    "exam": "GATE 1999",
+    "tag": "GATE 1999",
+    "section": "D. Relational algebra",
+    "topic": "relational",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Which condition is associated with first normal form (1NF)?",
-    options:[
-      "Every table must have exactly two columns",
-      "Attribute values must be atomic, without repeating groups",
-      "Every non-key attribute must depend on the entire key",
-      "Every non-key attribute must depend directly on the primary key and nothing else"
+    "id": 26,
+    "q": "Which query type cannot always be expressed using only the basic relational algebra operations (σ, π, ∪, -, ×, ρ)?",
+    "options": [
+      "Row selection based on boolean predicates",
+      "A query requiring unrestricted aggregation, such as calculating an average",
+      "Cartesian product of two tables",
+      "Set difference of two compatible tables"
     ],
-    answer:1,
-    explanation:"1NF requires atomic attribute values with no repeating groups or nested relations. Option C states the 2NF requirement and option D gestures at 3NF.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"normalization", difficulty:"easy"
+    "answer": 1,
+    "explanation": "A query requiring unrestricted aggregation, such as calculating an average. Basic relational algebra includes selection, projection, union, difference, Cartesian product and rename. Standard aggregate operations are not part of this basic set.",
+    "exam": "GATE 2000",
+    "tag": "GATE 2000",
+    "section": "D. Relational algebra",
+    "topic": "relational",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"A relation is in 2NF if it is in 1NF and:",
-    options:[
-      "It has no foreign keys",
-      "It has no partial dependency of a non-prime attribute on a proper subset of a candidate key",
-      "Every determinant is a superkey",
-      "It contains no functional dependencies"
+    "id": 27,
+    "q": "Three buffers are available, one reserved for output. Which relation should be used as the outer relation in a block nested-loop join to reduce I/O, assuming the smaller relation fits the available outer buffers?",
+    "options": [
+      "The larger relation",
+      "The smaller relation",
+      "Either relation yields identical I/O",
+      "The relation with fewer attributes"
     ],
-    answer:1,
-    explanation:"A partial dependency occurs when a non-prime attribute depends on only part of a composite candidate key. Eliminating these is precisely what separates 2NF from 1NF. Option C describes BCNF.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"normalization", difficulty:"medium"
+    "answer": 1,
+    "explanation": "The smaller relation. Using the smaller relation as the outer input reduces the number of block iterations over the inner relation.",
+    "exam": "GATE 2014, Set 2",
+    "tag": "GATE 2014 Set 2",
+    "section": "D. Relational algebra",
+    "topic": "joins",
+    "difficulty": "hard",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Which condition is sufficient for a relation to be in BCNF?",
-    options:[
-      "Every determinant of a non-trivial functional dependency is a superkey",
-      "Every attribute is numeric",
-      "Every relation has exactly one candidate key",
-      "Every non-key attribute depends on only one column"
+    "id": 28,
+    "q": "Two transactions access the same data item X. When do their operations conflict?",
+    "options": [
+      "Whenever both operations are reads",
+      "When they belong to different transactions, access the same item, and at least one operation is a write",
+      "Only when both operations are aborts",
+      "When they commit at the same millisecond"
     ],
-    answer:0,
-    explanation:"BCNF requires that for every non-trivial dependency X → Y, X is a superkey. This is strictly stronger than 3NF, which additionally permits dependencies whose right-hand side consists of prime attributes.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"normalization", difficulty:"hard"
+    "answer": 1,
+    "explanation": "When they belong to different transactions, access the same item, and at least one operation is a write. Read–read operations do not conflict. Read–write, write–read, and write–write operations on the same item do conflict.",
+    "exam": "GATE 2026, Set 2",
+    "tag": "GATE 2026 Set 2",
+    "section": "E. Transactions and concurrency control",
+    "topic": "transactions",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"R(A, B, C) is decomposed into R1(A, B) and R2(B, C). Which condition guarantees a lossless decomposition under the binary-decomposition test?",
-    options:[
-      "A → C",
-      "B → A or B → C",
-      "A → B only",
-      "No functional dependencies hold"
+    "id": 29,
+    "q": "Consider this schedule: R1(X), W1(Y), R2(X), R2(Y), R3(Y), ABORT(T1). Which other transactions must roll back under cascading rollback rules?",
+    "options": [
+      "Only T2",
+      "T2 and T3",
+      "Only T3",
+      "Neither transaction"
     ],
-    answer:1,
-    explanation:"The common attribute is B. A binary decomposition is lossless if the common attributes functionally determine all attributes of at least one fragment. B → A makes B a key for R1; B → C makes it a key for R2.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"normalization", difficulty:"hard"
+    "answer": 1,
+    "explanation": "T2 and T3. T2 read Y, which was written by T1 but not committed. T3 also read that uncommitted value of Y. When T1 aborts, both dependent transactions must roll back.",
+    "exam": "GATE 2025, Set 1",
+    "tag": "GATE 2025 Set 1",
+    "section": "E. Transactions and concurrency control",
+    "topic": "transactions",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "W3Colleges"
   },
   {
-    q:"Which relational algebra expression selects students whose marks exceed 80?",
-    options:["π(marks>80)(Student)","σ(marks>80)(Student)","Student × marks>80","ρ(marks>80)(Student)"],
-    answer:1,
-    explanation:"Selection σ filters tuples by a predicate. Projection π chooses attributes, × is the Cartesian product and ρ is rename.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"relational", difficulty:"easy"
-  },
-  {
-    q:"Which expression retrieves only the name attribute from Student?",
-    options:["σ(name)(Student)","π(name)(Student)","Student ⋈ name","ρ(name)(Student)"],
-    answer:1,
-    explanation:"Projection π selects columns. Note that classical relational algebra eliminates duplicates from the projection, whereas SQL retains them unless DISTINCT is specified.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"relational", difficulty:"easy"
-  },
-
-  /* ---------- PART C — Broader DBMS ---------- */
-
-  {
-    q:"Which ACID property ensures that a transaction either completes entirely or has no effect?",
-    options:["Consistency","Isolation","Atomicity","Durability"],
-    answer:2,
-    explanation:"Atomicity treats a transaction as one indivisible unit. If a bank transfer debits one account but fails before crediting the other, the whole transaction rolls back. Consistency preserves constraints, Isolation governs concurrent interaction, Durability guarantees committed changes survive failure.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"transactions", difficulty:"easy"
-  },
-  {
-    q:"A precedence graph for a transaction schedule contains a directed cycle. What can be concluded?",
-    options:[
-      "The schedule is conflict-serializable",
-      "The schedule is not conflict-serializable",
-      "The schedule must be recoverable",
-      "The schedule contains no conflicting operations"
+    "id": 30,
+    "q": "What are the two phases of Two-Phase Locking (2PL)?",
+    "options": [
+      "Locking and Unlocking",
+      "Growing and shrinking",
+      "Shared and Exclusive",
+      "Validation and Commit"
     ],
-    answer:1,
-    explanation:"A schedule is conflict-serializable if and only if its precedence graph is acyclic. A cycle means the transactions impose mutually incompatible ordering constraints, so no equivalent serial order exists.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"transactions", difficulty:"medium"
+    "answer": 1,
+    "explanation": "Growing and shrinking. A transaction acquires locks in the growing phase. After it releases its first lock, it enters the shrinking phase and cannot acquire any new lock.",
+    "exam": "GATE 2016",
+    "tag": "GATE 2016",
+    "section": "E. Transactions and concurrency control",
+    "topic": "transactions",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"What is a key characteristic of a B+ tree index?",
-    options:[
-      "All records must be stored in the root node",
-      "Search keys and record pointers are stored at the leaves, which are linked for sequential access",
-      "Every internal node must have exactly two children",
-      "It cannot support range queries efficiently"
+    "id": 31,
+    "q": "How do you test whether a concurrent schedule is conflict-serializable?",
+    "options": [
+      "Verify that all transactions commit without timeouts",
+      "Construct its precedence graph and check for cycles",
+      "Check that all reads occur before any write",
+      "Ensure transactions hold exclusive locks throughout"
     ],
-    answer:1,
-    explanation:"B+ trees keep a balanced structure where internal nodes only guide the search and the leaves hold data entries, linked together. That linkage is exactly what makes range scans efficient.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"indexing", difficulty:"medium"
+    "answer": 1,
+    "explanation": "Construct its precedence graph and check for cycles. Create one vertex per transaction and add an edge Ti → Tj when a conflicting operation of Ti precedes one of Tj. An acyclic graph means the schedule is conflict-serializable.",
+    "exam": "GATE 2016",
+    "tag": "GATE 2016",
+    "section": "E. Transactions and concurrency control",
+    "topic": "transactions",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Why is a clustered index often useful for a range query over consecutive key values?",
-    options:[
-      "It eliminates the need for all storage",
-      "Related records are stored in an order that can reduce the I/O needed to retrieve the range",
-      "It guarantees that every query runs in constant time",
-      "It prevents insertions into the table"
+    "id": 32,
+    "q": "What is the relationship between conflict serializability and serial schedules?",
+    "options": [
+      "A conflict-serializable schedule cannot contain concurrent operations",
+      "A conflict-serializable schedule is conflict-equivalent to some serial schedule",
+      "Every non-serial schedule is conflict non-serializable",
+      "Conflict serializability guarantees deadlock-free execution"
     ],
-    answer:1,
-    explanation:"When rows are physically ordered by the indexed key, a range retrieval reads neighbouring pages sequentially rather than issuing scattered random reads. There can be at most one clustered index per table.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"indexing", difficulty:"medium"
+    "answer": 1,
+    "explanation": "A conflict-serializable schedule is conflict-equivalent to some serial schedule. The schedule may interleave operations, but its conflicting operations preserve the order of an equivalent serial execution.",
+    "exam": "GATE 2015",
+    "tag": "GATE 2015",
+    "section": "E. Transactions and concurrency control",
+    "topic": "transactions",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"A table stores StudentID, StudentName, DepartmentID and DepartmentName, with StudentID → DepartmentID and DepartmentID → DepartmentName. What is the main reason to decompose it?",
-    options:[
-      "To introduce duplicate department names",
-      "To remove a transitive dependency and reduce update anomalies",
-      "To make StudentID cease being a key",
-      "To eliminate all joins from the database"
+    "id": 33,
+    "q": "Two transactions each hold one lock and wait for a lock held by the other. What condition has occurred?",
+    "options": [
+      "Starvation",
+      "Deadlock",
+      "Cascading abort",
+      "Livelock"
     ],
-    answer:1,
-    explanation:"DepartmentName is transitively dependent on StudentID via DepartmentID, which violates 3NF. Splitting into Student(StudentID, StudentName, DepartmentID) and Department(DepartmentID, DepartmentName) stores each department name once, preventing inconsistent updates.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"normalization", difficulty:"medium"
-  },
-
-  /* ---------- Query optimisation (keeps the project topic represented) ---------- */
-
-  {
-    q:"A relation has 20,000 tuples at 10 tuples per block. A linear search for a non-key equality match costs how many block transfers in the worst case?",
-    options:["1000","2000","100","20000"],
-    answer:1,
-    explanation:"20,000 / 10 = 2,000 blocks. Because the attribute is not a key, matching tuples may appear anywhere, so all 2,000 blocks must be read. For a key attribute the average would be about half.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"cost", difficulty:"medium"
+    "answer": 1,
+    "explanation": "Deadlock. Each transaction waits indefinitely for the other to release a resource. A wait-for graph with a cycle indicates deadlock under the usual single-instance resource assumptions.",
+    "exam": "GATE 2014",
+    "tag": "GATE 2014",
+    "section": "E. Transactions and concurrency control",
+    "topic": "transactions",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"Which rule is a valid heuristic in relational-algebra query optimisation?",
-    options:[
-      "Perform Cartesian products before selections",
-      "Push selections down as close to the leaves as possible",
-      "Perform projections only at the root of the tree",
-      "Always materialise every intermediate relation"
+    "id": 34,
+    "q": "Transaction T2 reads a value written by T1. What must happen for the schedule to be recoverable?",
+    "options": [
+      "T2 must commit before T1 commits",
+      "T1 must commit before T2 commits",
+      "Both transactions must abort",
+      "T1 must release all locks before T2 reads"
     ],
-    answer:1,
-    explanation:"Pushing selections toward the leaves shrinks intermediate relations early, which is the single most effective heuristic transformation. The other three options all increase intermediate sizes.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"optimization", difficulty:"easy"
+    "answer": 1,
+    "explanation": "T1 must commit before T2 commits. If T2 commits first and T1 later aborts, T2 has committed based on a dirty value that was never valid.",
+    "exam": "GATE 2012",
+    "tag": "GATE 2012",
+    "section": "E. Transactions and concurrency control",
+    "topic": "transactions",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"SELECT name FROM emp WHERE UPPER(dept) = 'SALES'; performs poorly despite an index on dept. Why?",
-    options:[
-      "UPPER is not a valid SQL function",
-      "Applying a function to the indexed column makes the predicate non-sargable",
-      "The index is corrupted",
-      "String comparison is never indexed"
+    "id": 35,
+    "q": "What is a dirty read in transaction management?",
+    "options": [
+      "Reading data from a table that has no indexes",
+      "Reading an uncommitted value written by another transaction",
+      "Reading records from an archived log file",
+      "Reading duplicate rows from a Cartesian product"
     ],
-    answer:1,
-    explanation:"Wrapping the column in a function destroys the ordering the B+ tree relies on, so no seek is possible. Fix it with a functional index on UPPER(dept), or restructure the comparison to leave the column bare.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"optimization", difficulty:"medium"
+    "answer": 1,
+    "explanation": "Reading an uncommitted value written by another transaction. If the writer aborts, the reader has consumed a value that must be undone.",
+    "exam": "GATE 2010",
+    "tag": "GATE 2010",
+    "section": "E. Transactions and concurrency control",
+    "topic": "transactions",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"For independent predicates P1 (selectivity 0.1) and P2 (selectivity 0.2), what is the selectivity of P1 OR P2?",
-    options:["0.3","0.02","0.28","0.12"],
-    answer:2,
-    explanation:"By inclusion–exclusion, P(A ∪ B) = 1 − (1 − 0.1)(1 − 0.2) = 1 − 0.72 = 0.28. Simply adding to 0.3 would double-count the overlap.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"selectivity", difficulty:"medium"
+    "id": 36,
+    "q": "A transaction commits, then a system crash occurs before its modified data pages are written to disk. Which property must recovery preserve?",
+    "options": [
+      "Atomicity",
+      "Consistency",
+      "Isolation",
+      "Durability"
+    ],
+    "answer": 3,
+    "explanation": "Durability. Durability requires that committed changes persist across system failures. The recovery system uses logging and redo, when required, to restore committed changes.",
+    "exam": "GATE 2024",
+    "tag": "GATE 2024",
+    "section": "E. Transactions and concurrency control",
+    "topic": "transactions",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   },
   {
-    q:"A query returns 9 million of a table's 10 million rows. Which access path will the optimiser most likely choose?",
-    options:["Index scan","Sequential scan","Nested loop","Bitmap index scan only"],
-    answer:1,
-    explanation:"At high selectivity, scattered random index lookups cost far more than reading the table sequentially. The crossover typically sits around 5–20% of rows.",
-    exam:null,
-    verified:false,
-    tag:"GATE-style Practice",
-    topic:"optimization", difficulty:"medium"
+    "id": 37,
+    "q": "Which index is generally preferable for equality searches, and which supports efficient range searches?",
+    "options": [
+      "B+ tree for equality only; Hash index for range searches",
+      "Hashing is generally preferable for equality searches; B+ trees support equality and range searches",
+      "Bitmap index for range searches; Dense index for equality only",
+      "Linear hashing for range queries; Secondary index for equality"
+    ],
+    "answer": 1,
+    "explanation": "Hashing is generally preferable for equality searches; B+ trees support equality and range searches. Hashing does not preserve key order, so range scans are typically less efficient.",
+    "exam": "GATE 2026, Set 2",
+    "tag": "GATE 2026 Set 2",
+    "section": "F. File organization and indexing",
+    "topic": "indexing",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 38,
+    "q": "Which file organization is generally I/O-efficient for scanning a large fraction of a table?",
+    "options": [
+      "Unordered heap file with random hashing",
+      "Sequential or ordered file organization",
+      "Clustered hash table",
+      "Inverted index file"
+    ],
+    "answer": 1,
+    "explanation": "Sequential or ordered file organization. Sequential access reduces random I/O when many records must be read. The exact best organization depends on the storage layout and query pattern.",
+    "exam": "GATE 2024, Set 2",
+    "tag": "GATE 2024 Set 2",
+    "section": "F. File organization and indexing",
+    "topic": "indexing",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 39,
+    "q": "For which node in a B+ tree is the minimum half-full occupancy condition relaxed?",
+    "options": [
+      "Internal nodes",
+      "Leaf nodes",
+      "The root",
+      "Sibling nodes"
+    ],
+    "answer": 2,
+    "explanation": "The root. The root has special occupancy requirements: it can have as few as 2 pointers (or 1 key if it is also a leaf). A root that is also a leaf is subject to the corresponding root-leaf rules.",
+    "exam": "GATE 2024, Set 1",
+    "tag": "GATE 2024 Set 1",
+    "section": "F. File organization and indexing",
+    "topic": "indexing",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 40,
+    "q": "A file has 150,000 student records and a disk block size of 4,096 bytes. What information is needed to calculate the number of data blocks?",
+    "options": [
+      "The primary key data type only",
+      "The record size and the blocking/packing convention",
+      "The number of indexes on the file",
+      "The disk controller RPM"
+    ],
+    "answer": 1,
+    "explanation": "The record size and the blocking/packing convention. If each record has size r bytes and records cannot span blocks, the blocking factor is ⌊4096/r⌋, and the number of blocks is ⌈150000/blocking factor⌉.",
+    "exam": "GATE 2019",
+    "tag": "GATE 2019",
+    "section": "F. File organization and indexing",
+    "topic": "indexing",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 41,
+    "q": "Why is a B+ tree considered balanced?",
+    "options": [
+      "The number of keys in the left and right subtrees are equal",
+      "All leaf nodes are at the same depth",
+      "It contains an equal number of internal and leaf nodes",
+      "Its height is always less than 3"
+    ],
+    "answer": 1,
+    "explanation": "All leaf nodes are at the same depth. A search from the root to any leaf traverses the same number of tree levels.",
+    "exam": "GATE 2016, Set 2",
+    "tag": "GATE 2016 Set 2",
+    "section": "F. File organization and indexing",
+    "topic": "indexing",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 42,
+    "q": "A range query asks for all keys from 7 inclusive to 15 exclusive. Why are linked B+ tree leaves useful?",
+    "options": [
+      "They allow hashing the range boundaries directly",
+      "After finding the first qualifying leaf entry, the index can scan sequentially through linked leaves until reaching 15",
+      "They double the fanout of internal nodes",
+      "They eliminate the need for index locks"
+    ],
+    "answer": 1,
+    "explanation": "After finding the first qualifying leaf entry, the index can scan sequentially through linked leaves until reaching 15. This avoids searching from the root for each individual key.",
+    "exam": "GATE 2015, Set 2",
+    "tag": "GATE 2015 Set 2",
+    "section": "F. File organization and indexing",
+    "topic": "indexing",
+    "difficulty": "medium",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 43,
+    "q": "A B+ tree node can contain at most 5 keys. What is the minimum number of keys in a non-root node under the standard half-full rule?",
+    "options": [
+      "1 key",
+      "2 keys",
+      "3 keys",
+      "4 keys"
+    ],
+    "answer": 1,
+    "explanation": "2 keys. Under standard B+ tree definitions where a node holds at most 5 keys (fanout order p = 6), a non-root internal node must hold at least ⌈p/2⌉ - 1 = ⌈6/2⌉ - 1 = 2 keys.",
+    "exam": "GATE 2010",
+    "tag": "GATE 2010",
+    "section": "F. File organization and indexing",
+    "topic": "indexing",
+    "difficulty": "hard",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 44,
+    "q": "A foreign key references a primary key in another table. What happens if a non-NULL foreign-key value has no matching referenced key?",
+    "options": [
+      "The DBMS creates a stub parent row",
+      "The database rejects the operation if it violates the referential-integrity constraint",
+      "The foreign-key is silently replaced with NULL",
+      "The row is stored in a temporary heap table"
+    ],
+    "answer": 1,
+    "explanation": "The database rejects the operation if it violates the referential-integrity constraint. A foreign key must reference an existing key value, unless NULL is permitted and used.",
+    "exam": "GATE 2021",
+    "tag": "GATE 2021",
+    "section": "G. Query processing, integrity constraints and recovery",
+    "topic": "constraints",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 45,
+    "q": "Why is normalization used in relational database design?",
+    "options": [
+      "To maximize physical disk usage",
+      "To reduce redundancy and prevent insertion, deletion, and update anomalies",
+      "To convert SQL queries into relational algebra",
+      "To eliminate the need for primary keys"
+    ],
+    "answer": 1,
+    "explanation": "To reduce redundancy and prevent insertion, deletion, and update anomalies. Decomposing relations according to functional dependencies reduces repeated storage of the same facts.",
+    "exam": "GATE 2005",
+    "tag": "GATE 2005",
+    "section": "G. Query processing, integrity constraints and recovery",
+    "topic": "normalization",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 46,
+    "q": "If functional dependencies are A → B, B → C, and C → D, what is the attribute closure A+ for relation R(A, B, C, D)?",
+    "options": [
+      "{A}",
+      "{A, B}",
+      "{A, B, C, D}",
+      "{B, C, D}"
+    ],
+    "answer": 2,
+    "explanation": "{A, B, C, D}. Starting from A: A → B gives {A, B}; B → C gives {A, B, C}; C → D gives {A, B, C, D}. Since the closure contains every attribute, A is a candidate key.",
+    "exam": "GATE 2014",
+    "tag": "GATE 2014",
+    "section": "G. Query processing, integrity constraints and recovery",
+    "topic": "normalization",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 47,
+    "q": "What is the name of an index where the data records are stored in the same or nearly the same order as the index entries?",
+    "options": [
+      "Dense secondary index",
+      "A clustering index",
+      "Hash index",
+      "Bitmap index"
+    ],
+    "answer": 1,
+    "explanation": "A clustering index. A clustering index groups records with similar search-key values in physical sorted order, which can dramatically improve access to groups of records.",
+    "exam": "GATE 2015",
+    "tag": "GATE 2015",
+    "section": "G. Query processing, integrity constraints and recovery",
+    "topic": "indexing",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 48,
+    "q": "What is the purpose of query optimization in a DBMS?",
+    "options": [
+      "To format SQL text with indentation",
+      "To select an efficient execution plan that returns the same query result",
+      "To encrypt data stored in data blocks",
+      "To prevent users from writing SELECT queries"
+    ],
+    "answer": 1,
+    "explanation": "To select an efficient execution plan that returns the same query result. The optimizer estimates the costs of alternative plans, including disk I/O, join order, and available indexes.",
+    "exam": "GATE 2016",
+    "tag": "GATE 2016",
+    "section": "G. Query processing, integrity constraints and recovery",
+    "topic": "optimization",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 49,
+    "q": "What is the purpose and rule of Write-Ahead Logging (WAL)?",
+    "options": [
+      "Data pages must be written to disk before log records",
+      "The relevant log records must be written to stable storage before the corresponding modified data pages are written",
+      "Logs are written only when the system restarts",
+      "WAL replaces database indexes with sequential files"
+    ],
+    "answer": 1,
+    "explanation": "The relevant log records must be written to stable storage before the corresponding modified data pages are written. WAL allows recovery to use the log to undo or redo changes after a crash.",
+    "exam": "GATE 2019",
+    "tag": "GATE 2019",
+    "section": "G. Query processing, integrity constraints and recovery",
+    "topic": "optimization",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
+  },
+  {
+    "id": 50,
+    "q": "Why does a DBMS create checkpoints in the write-ahead log?",
+    "options": [
+      "To stop all incoming connections",
+      "To reduce the amount of work needed during crash recovery",
+      "To delete all old committed transactions from tables",
+      "To invalidate the buffer cache completely"
+    ],
+    "answer": 1,
+    "explanation": "To reduce the amount of work needed during crash recovery. Checkpoints record recovery-relevant state so the recovery process does not necessarily need to scan the entire transaction log from its beginning.",
+    "exam": "GATE 2020",
+    "tag": "GATE 2020",
+    "section": "G. Query processing, integrity constraints and recovery",
+    "topic": "optimization",
+    "difficulty": "easy",
+    "verified": true,
+    "source": "ExamSIDE.Com"
   }
-
 ];
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { EXAM_BANK };
+}

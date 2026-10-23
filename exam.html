@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>50 GATE DBMS PYQs — Answers and Solutions | QueryLens</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="nav-container">
+
+    <a href="index.html" class="logo">
+      <span class="logo-mark">
+        <i></i><i></i><i></i>
+      </span>
+      <span class="logo-text">Query<span>Lens</span></span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Analyze</a>
+      <a href="learn.html">Learn</a>
+      <a href="exam.html" class="active">Competitive Exam</a>
+      <a href="quiz.html">Quiz</a>
+      <a href="help.html">Help</a>
+      <a href="developed.html">Developed By</a>
+
+      <a href="quiz.html" class="nav-button quiz-nav-btn" id="quizBtn" type="button">QUIZ</a>
+
+      <div class="download-wrapper">
+        <button class="nav-button" id="downloadBtn" type="button">Download ▾</button>
+
+        <div class="download-menu" id="downloadMenu">
+          <button id="downloadText" type="button">Text Report</button>
+          <button id="downloadDoc" type="button">Document Report</button>
+          <button id="downloadJson" type="button">JSON Report</button>
+          <button id="downloadPdf" type="button">Print / Save PDF</button>
+        </div>
+      </div>
+
+      <button class="theme-toggle" id="themeToggle" type="button" title="Toggle Day/Night Mode">
+        <span id="themeIcon">☾</span>
+      </button>
+    </nav>
+
+    <button class="mobile-menu" id="mobileMenu" type="button">☰</button>
+
+  </div>
+</header>
+
+<main>
+
+<!-- ================= COMPETITIVE EXAM HERO ================= -->
+
+<section class="section" style="padding-bottom: 30px;">
+
+  <div class="page-intro-card">
+    <span class="eyebrow">COMPETITIVE EXAM PREPARATION</span>
+    <h1>50 GATE DBMS PYQs — Answers and Solutions</h1>
+    <p>
+      A comprehensive revision set across every core DBMS topic compiled from authentic GATE previous year question papers.
+      Select an option on any question to test yourself, see immediate feedback with full step-by-step solutions, or test queries in the live cost analyzer.
+    </p>
+    <div style="display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap;">
+      <a href="#examList" class="primary-button small">Start Practicing ↓</a>
+      <button class="secondary-button small" id="examDownloadBtnTop" type="button" onclick="document.getElementById('examDownloadBtn').click()">📥 Download All 50 Questions</button>
+      <a href="index.html" class="ghost-button small">⚡ Open Query Analyser</a>
+    </div>
+  </div>
+
+  <div class="panel" style="width: min(1200px, 100%); margin: auto;">
+
+    <div class="panel-header">
+
+      <div class="panel-title">
+        <span class="panel-number">50</span>
+        <div>
+          <h3>GATE DBMS Question Bank</h3>
+          <p id="examCount">Loading 50 questions…</p>
+        </div>
+      </div>
+
+      <button class="secondary-button small" id="examDownloadBtn" type="button">
+        Download All (.txt)
+      </button>
+
+    </div>
+
+    <div class="exam-controls">
+
+      <input
+        type="search"
+        id="examSearch"
+        class="exam-search"
+        placeholder="Search questions, keywords, topics or GATE years (e.g. 2024, BCNF, 2PL, WAL)…" />
+
+      <select id="examTopicFilter" class="exam-select">
+        <option value="all">All 50 Questions (Sections A to G)</option>
+        <option value="sec_a">Section A: ER &amp; Relational Model (Q1–Q3)</option>
+        <option value="sec_b">Section B: Functional Dependencies &amp; Normalization (Q4–Q10)</option>
+        <option value="sec_c">Section C: SQL Queries &amp; Filtering (Q11–Q20)</option>
+        <option value="sec_d">Section D: Relational Algebra &amp; Joins (Q21–Q27)</option>
+        <option value="sec_e">Section E: Transactions &amp; Concurrency (Q28–Q36)</option>
+        <option value="sec_f">Section F: File Organization &amp; Indexing (Q37–Q43)</option>
+        <option value="sec_g">Section G: Query Processing &amp; Recovery (Q44–Q50)</option>
+        <optgroup label="Filter by Topic">
+          <option value="sql">SQL &amp; Aggregate Queries</option>
+          <option value="joins">Joins &amp; Outer Joins</option>
+          <option value="normalization">Normalization, BCNF &amp; Keys</option>
+          <option value="relational">Relational Model &amp; Algebra</option>
+          <option value="transactions">Transactions, 2PL &amp; Serializability</option>
+          <option value="indexing">B+ Trees &amp; File Indexing</option>
+          <option value="constraints">Foreign Keys &amp; Integrity</option>
+          <option value="optimization">Optimization &amp; WAL Recovery</option>
+        </optgroup>
+      </select>
+
+    </div>
+
+    <div class="exam-notice">
+      <strong>50 GATE DBMS PYQs Collection:</strong>
+      All questions in this bank are sourced from past GATE papers (1994–2026) across Computer Science &amp; Information Technology, complete with official answer keys and step-by-step solutions across Sections A through G.
+    </div>
+
+    <div id="examProgress" class="exam-progress"></div>
+
+    <div id="examList" class="exam-list"></div>
+
+  </div>
+
+</section>
+
+</main>
+
+<!-- ================= QUIZ MODAL ================= -->
+
+<div id="quizModal" class="quiz-modal">
+  <div class="quiz-dialog">
+    <button class="quiz-close" id="quizCloseBtn" type="button">✕</button>
+
+    <div id="quizSetup">
+      <span class="eyebrow">QUIZ</span>
+      <h3>Configure your quiz</h3>
+      <p>Select the number of questions and a difficulty level.</p>
+
+      <label class="quiz-field">
+        <span>Number of questions</span>
+        <input type="number" id="quizCount" min="1" max="50" value="10" />
+      </label>
+
+      <label class="quiz-field">
+        <span>Difficulty level</span>
+        <select id="quizDifficulty">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </label>
+
+      <button class="primary-button" id="quizStartBtn" type="button">Begin Quiz</button>
+    </div>
+
+    <div id="quizPlay" class="hidden">
+      <div class="quiz-progress" id="quizProgress"></div>
+      <h3 id="quizQuestion"></h3>
+      <span class="exam-tag" id="quizTag"></span>
+      <div id="quizOptions" class="quiz-options"></div>
+      <div id="quizFeedback" class="quiz-feedback hidden"></div>
+      <button class="primary-button small hidden" id="quizNextBtn" type="button">Next Question</button>
+    </div>
+
+    <div id="quizSummary" class="hidden"></div>
+  </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <div class="logo">
+        <span class="logo-mark"><i></i><i></i><i></i></span>
+        <span class="logo-text">Query<span>Lens</span></span>
+      </div>
+      <p>SQL Query Cost Analyser &amp; Competitive Exam Hub</p>
+    </div>
+
+    <div class="footer-info">
+      <p>DBMS DA1 Project • VIT</p>
+      <p>Guided by Dr. Swaminathan A</p>
+    </div>
+
+    <div class="footer-copy">
+      <p>© 2026 QueryLens</p>
+    </div>
+  </div>
+</footer>
+
+<script src="cost-model.js"></script>
+<script src="exam-bank.js"></script>
+<script src="script.js"></script>
+<script src="quiz.js"></script>
+
+</body>
+</html>

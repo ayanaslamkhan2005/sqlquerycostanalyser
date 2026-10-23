@@ -200,7 +200,7 @@ function buildQuiz(count,difficulty){
 function sourceNote(q){
 
   if(q.verified && q.exam){
-    return `Source: ${escapeHTML(q.exam)} — verified against the official paper.`;
+    return `Source: ${escapeHTML(q.exam)} (${escapeHTML(q.source || "Official GATE Archive")}) — verified authentic GATE DBMS PYQ with complete solution.`;
   }
 
   if(q.exam){
@@ -484,6 +484,8 @@ function renderExamProgress(){
 
 function renderExamBank(filterTopic,search){
 
+  if(!$("examList")) return;
+
   const topic = filterTopic || "all";
   const term = (search || "").trim().toLowerCase();
 
@@ -492,18 +494,25 @@ function renderExamBank(filterTopic,search){
     .map((q,originalIndex)=>({ q, originalIndex }))
     .filter(({ q })=>{
 
-      const topicOk = topic === "all" || q.topic === topic;
+      const sectionMatch = topic.startsWith("sec_")
+        && q.section
+        && q.section.toLowerCase().startsWith(topic.replace("sec_", "").toLowerCase() + ".");
+
+      const topicOk = topic === "all" || q.topic === topic || sectionMatch;
 
       const textOk = !term
         || q.q.toLowerCase().includes(term)
         || (q.tag || "").toLowerCase().includes(term)
+        || (q.section || "").toLowerCase().includes(term)
         || (q.explanation || "").toLowerCase().includes(term);
 
       return topicOk && textOk;
     });
 
-  $("examCount").textContent =
-    `${list.length} of ${EXAM_BANK.length} questions`;
+  if($("examCount")){
+    $("examCount").textContent =
+      `${list.length} of ${EXAM_BANK.length} questions`;
+  }
 
   renderExamProgress();
 
@@ -527,6 +536,8 @@ function renderExamBank(filterTopic,search){
       ? ""
       : wasRight ? "exam-item-right" : "exam-item-wrong";
 
+    const sqlExtract = (q.q.match(/SELECT\s+[\s\S]+?;/i) || [])[0];
+
     return `
 
       <div class="exam-item ${statusClass}" data-q="${originalIndex}">
@@ -534,10 +545,18 @@ function renderExamBank(filterTopic,search){
         <div class="exam-head">
           <span class="exam-num">${displayIndex + 1}</span>
           <span class="exam-q">${escapeHTML(q.q)}</span>
+          ${q.section ? `<span class="exam-section-badge">${escapeHTML(q.section.split("—")[0].trim())}</span>` : ""}
           <span class="exam-tag ${q.verified ? "tag-verified" : "tag-practice"}">
             ${escapeHTML(q.tag)}
           </span>
         </div>
+        ${sqlExtract ? `
+          <div style="margin: 6px 0 10px 0;">
+            <a href="index.html?sql=${encodeURIComponent(sqlExtract)}" class="try-query-btn" title="Test this SQL in QueryLens Analyser">
+              ⚡ Test SQL in Analyser →
+            </a>
+          </div>
+        ` : ""}
 
         <div class="exam-choices">
           ${q.options.map((opt,j)=>{
@@ -730,11 +749,17 @@ function initQuizModule(){
 
   /* Exam filters */
   on("examTopicFilter","change",()=>{
-    renderExamBank($("examTopicFilter").value,$("examSearch").value);
+    renderExamBank(
+      $("examTopicFilter") ? $("examTopicFilter").value : "all",
+      $("examSearch") ? $("examSearch").value : ""
+    );
   });
 
   on("examSearch","input",()=>{
-    renderExamBank($("examTopicFilter").value,$("examSearch").value);
+    renderExamBank(
+      $("examTopicFilter") ? $("examTopicFilter").value : "all",
+      $("examSearch") ? $("examSearch").value : ""
+    );
   });
 
   on("examDownloadBtn","click",downloadExamBank);

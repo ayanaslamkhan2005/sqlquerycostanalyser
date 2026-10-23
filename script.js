@@ -77,6 +77,7 @@ function formatNumber(value){
 function normalizeSQL(sql){
   return sql
     .replace(/--.*$/gm,"")
+    .replace(/\/\*[\s\S]*?\*\//g,"")
     .replace(/\s+/g," ")
     .trim()
     .replace(/;$/,"");
@@ -279,6 +280,8 @@ const SCHEMA = {
 
 function renderSchema(){
 
+  if(!$("schemaContainer")) return;
+
   $("schemaContainer").innerHTML =
     Object.entries(SCHEMA).map(([table,info])=>`
 
@@ -317,12 +320,16 @@ function renderSchema(){
 
 function applyTheme(theme){
 
-  if(theme === "dark"){
-    document.body.classList.add("dark");
-    $("themeIcon").textContent = "☀";
-  }else{
-    document.body.classList.remove("dark");
-    $("themeIcon").textContent = "☾";
+  if(document.body){
+    if(theme === "dark"){
+      document.body.classList.add("dark");
+    }else{
+      document.body.classList.remove("dark");
+    }
+  }
+
+  if($("themeIcon")){
+    $("themeIcon").textContent = theme === "dark" ? "☀" : "☾";
   }
 }
 
@@ -343,16 +350,18 @@ function initTheme(){
 }
 
 
-$("themeToggle").addEventListener("click",()=>{
+if($("themeToggle")){
+  $("themeToggle").addEventListener("click",()=>{
 
-  const next = document.body.classList.contains("dark")
-    ? "light"
-    : "dark";
+    const next = document.body.classList.contains("dark")
+      ? "light"
+      : "dark";
 
-  applyTheme(next);
+    applyTheme(next);
 
-  localStorage.setItem("querylens-theme",next);
-});
+    localStorage.setItem("querylens-theme",next);
+  });
+}
 
 
 /* =========================================================
@@ -383,28 +392,35 @@ function initAvatars(){
    MOBILE NAV
 ========================================================= */
 
-$("mobileMenu").addEventListener("click",()=>{
-  document.querySelector(".nav-links").classList.toggle("mobile-open");
-});
+if($("mobileMenu")){
+  $("mobileMenu").addEventListener("click",()=>{
+    const nav = document.querySelector(".nav-links");
+    if(nav) nav.classList.toggle("mobile-open");
+  });
+}
 
 
 /* =========================================================
    DOWNLOAD MENU
 ========================================================= */
 
-$("downloadBtn").addEventListener("click",event=>{
-  event.stopPropagation();
-  $("downloadMenu").classList.toggle("show");
-});
+if($("downloadBtn")){
+  $("downloadBtn").addEventListener("click",event=>{
+    event.stopPropagation();
+    if($("downloadMenu")) $("downloadMenu").classList.toggle("show");
+  });
+}
 
 
-$("downloadMenu").addEventListener("click",event=>{
-  event.stopPropagation();
-});
+if($("downloadMenu")){
+  $("downloadMenu").addEventListener("click",event=>{
+    event.stopPropagation();
+  });
+}
 
 
 document.addEventListener("click",()=>{
-  $("downloadMenu").classList.remove("show");
+  if($("downloadMenu")) $("downloadMenu").classList.remove("show");
 });
 
 
@@ -1948,15 +1964,243 @@ function renderResult(rows){
 
 
 /* =========================================================
+   DEMO SQL QUERIES (Diverse Query Optimization Scenarios)
+========================================================= */
+
+const DEMO_QUERIES = [
+  {
+    id: "group_by_join",
+    name: "Group By & Join (Orders by Country)",
+    sql: `SELECT
+    c.country,
+    COUNT(o.id) AS total_orders
+FROM customers c
+JOIN orders o
+    ON c.id = o.customer_id
+WHERE c.country = 'India'
+GROUP BY c.country
+ORDER BY total_orders DESC
+LIMIT 10;`
+  },
+  {
+    id: "indexed_point",
+    name: "Indexed Filter (customers.country = 'India')",
+    sql: `SELECT * FROM customers WHERE country = 'India' LIMIT 20;`
+  },
+  {
+    id: "unindexed_scan",
+    name: "Full Table Scan (customers.city = 'Mumbai')",
+    sql: `SELECT * FROM customers WHERE city = 'Mumbai';`
+  },
+  {
+    id: "multi_join",
+    name: "3-Table E-Commerce Join (customers + orders + products)",
+    sql: `SELECT
+    c.name AS customer_name,
+    c.email,
+    p.name AS product_name,
+    p.category,
+    o.amount,
+    o.order_date
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+JOIN products p ON o.product_id = p.id
+WHERE o.status = 'Delivered'
+LIMIT 25;`
+  },
+  {
+    id: "product_agg",
+    name: "Category Aggregates (AVG price & total products)",
+    sql: `SELECT
+    category,
+    COUNT(id) AS total_products,
+    AVG(price) AS avg_price
+FROM products
+GROUP BY category
+ORDER BY avg_price DESC;`
+  },
+  {
+    id: "subquery_in",
+    name: "Subquery with IN (Customers with orders > 500)",
+    sql: `SELECT * FROM customers
+WHERE id IN (
+    SELECT customer_id FROM orders WHERE amount > 500
+)
+LIMIT 15;`
+  },
+  {
+    id: "expensive_sort",
+    name: "Expensive Unindexed Sort (orders.amount DESC)",
+    sql: `SELECT * FROM orders
+WHERE status = 'Processing'
+ORDER BY amount DESC
+LIMIT 50;`
+  },
+  {
+    id: "date_range",
+    name: "Order Status Lookup (orders.status = 'Shipped')",
+    sql: `SELECT id, customer_id, product_id, amount, status
+FROM orders
+WHERE status = 'Shipped'
+LIMIT 30;`
+  }
+];
+
+let currentDemoIndex = 0;
+
+function initDemoQueries(){
+  const select = $("demoQuerySelect");
+  if(select){
+    select.innerHTML = `<option value="" disabled selected>⚡ Demo Queries ▾</option>` +
+      DEMO_QUERIES.map((dq, idx) => `<option value="${idx}">${idx + 1}. ${escapeHTML(dq.name)}</option>`).join("");
+
+    select.addEventListener("change", function(){
+      const idx = parseInt(select.value, 10);
+      if(!isNaN(idx) && DEMO_QUERIES[idx]){
+        currentDemoIndex = idx;
+        if($("sqlInput")){
+          $("sqlInput").value = DEMO_QUERIES[idx].sql;
+          clearError();
+          analyzeQuery();
+        }
+      }
+    });
+  }
+
+  if($("exampleBtn")){
+    $("exampleBtn").addEventListener("click", () => {
+      const dq = DEMO_QUERIES[currentDemoIndex % DEMO_QUERIES.length];
+      currentDemoIndex++;
+      if($("sqlInput")){
+        $("sqlInput").value = dq.sql;
+        clearError();
+        $("sqlInput").focus();
+        analyzeQuery();
+      }
+      if($("demoQuerySelect")){
+        $("demoQuerySelect").value = String((currentDemoIndex - 1) % DEMO_QUERIES.length);
+      }
+    });
+  }
+}
+
+/* =========================================================
+   SQL FILE UPLOAD & COST ESTIMATION
+========================================================= */
+
+function formatFileSize(bytes){
+  if(bytes < 1024) return bytes + " B";
+  if(bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+  return (bytes / 1048576).toFixed(1) + " MB";
+}
+
+function handleUploadedSQLFile(file){
+  if(!file) return;
+
+  const validExts = [".sql", ".txt"];
+  const isSql = validExts.some(ext => file.name.toLowerCase().endsWith(ext));
+  if(!isSql && file.type && !file.type.includes("text")){
+    showError("Please upload a .sql or .txt file containing a SQL query.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const text = e.target.result;
+    if(!text || !text.trim()){
+      showError("The uploaded file is empty.");
+      return;
+    }
+
+    if($("sqlInput")){
+      $("sqlInput").value = text;
+    }
+
+    // Show upload badge
+    const badge = $("fileUploadInfo");
+    if(badge && $("fileInfoText")){
+      $("fileInfoText").innerHTML = `Loaded <strong>${escapeHTML(file.name)}</strong> (${formatFileSize(file.size)}) — Estimating cost...`;
+      badge.classList.remove("hidden");
+    }
+
+    clearError();
+
+    // Automatically analyze query and estimate cost!
+    analyzeQuery();
+
+    if(currentAnalysis && $("fileInfoText")){
+      $("fileInfoText").innerHTML = `✓ <strong>${escapeHTML(file.name)}</strong> (${formatFileSize(file.size)}) — Cost Score: <strong>${currentAnalysis.plan ? currentAnalysis.plan.score : ''}/100</strong> (${currentAnalysis.plan ? currentAnalysis.plan.category : ''})`;
+    }
+  };
+
+  reader.onerror = function(){
+    showError("Failed to read the uploaded file.");
+  };
+
+  reader.readAsText(file);
+}
+
+function initFileUpload(){
+  const fileInput = $("sqlFileInput");
+  if(fileInput){
+    fileInput.addEventListener("change", function(e){
+      if(e.target.files && e.target.files[0]){
+        handleUploadedSQLFile(e.target.files[0]);
+      }
+    });
+  }
+
+  const removeBtn = $("removeFileBtn");
+  if(removeBtn){
+    removeBtn.addEventListener("click", function(){
+      if($("fileUploadInfo")) $("fileUploadInfo").classList.add("hidden");
+      if($("sqlFileInput")) $("sqlFileInput").value = "";
+      if($("sqlInput")) $("sqlInput").value = "";
+      clearError();
+    });
+  }
+
+  const dropZone = $("sqlInput");
+  if(dropZone){
+    ["dragenter", "dragover"].forEach(name => {
+      dropZone.addEventListener(name, function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add("drag-over");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(name => {
+      dropZone.addEventListener(name, function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove("drag-over");
+      });
+    });
+
+    dropZone.addEventListener("drop", function(e){
+      const dt = e.dataTransfer;
+      if(dt && dt.files && dt.files.length > 0){
+        handleUploadedSQLFile(dt.files[0]);
+      }
+    });
+  }
+}
+
+/* =========================================================
    ANALYZE
 ========================================================= */
 
-$("analyzeBtn").addEventListener("click",analyzeQuery);
+if($("analyzeBtn")){
+  $("analyzeBtn").addEventListener("click",analyzeQuery);
+}
 
 
 function analyzeQuery(){
 
   clearError();
+
+  if(!$("sqlInput")) return;
 
   const original = $("sqlInput").value.trim();
 
@@ -1984,44 +2228,24 @@ function analyzeQuery(){
 
 
 /* =========================================================
-   EXAMPLE
-========================================================= */
-
-$("exampleBtn").addEventListener("click",()=>{
-
-  $("sqlInput").value =
-`SELECT
-    c.country,
-    COUNT(o.id) AS total_orders
-FROM customers c
-JOIN orders o
-    ON c.id = o.customer_id
-WHERE c.country = 'India'
-GROUP BY c.country
-ORDER BY total_orders DESC
-LIMIT 10`;
-
-  clearError();
-
-  $("sqlInput").focus();
-});
-
-
-/* =========================================================
    CLEAR
 ========================================================= */
 
-$("clearBtn").addEventListener("click",()=>{
+if($("clearBtn")){
+  $("clearBtn").addEventListener("click",()=>{
 
-  $("sqlInput").value = "";
+    if($("sqlInput")) $("sqlInput").value = "";
 
-  clearError();
+    clearError();
 
-  currentAnalysis = null;
+    currentAnalysis = null;
 
-  $("analysisContent").classList.add("hidden");
-  $("emptyAnalysis").classList.remove("hidden");
-});
+    if($("fileUploadInfo")) $("fileUploadInfo").classList.add("hidden");
+    if($("sqlFileInput")) $("sqlFileInput").value = "";
+    if($("analysisContent")) $("analysisContent").classList.add("hidden");
+    if($("emptyAnalysis")) $("emptyAnalysis").classList.remove("hidden");
+  });
+}
 
 
 /* =========================================================
@@ -2077,6 +2301,8 @@ function saveHistory(analysis){
 
 function renderHistory(){
 
+  if(!$("historyContainer")) return;
+
   const history = getHistory();
 
   if(!history.length){
@@ -2126,10 +2352,12 @@ function renderHistory(){
 }
 
 
-$("clearHistoryBtn").addEventListener("click",()=>{
-  localStorage.removeItem("querylens-history");
-  renderHistory();
-});
+if($("clearHistoryBtn")){
+  $("clearHistoryBtn").addEventListener("click",()=>{
+    localStorage.removeItem("querylens-history");
+    renderHistory();
+  });
+}
 
 
 /* =========================================================
@@ -2139,7 +2367,9 @@ $("clearHistoryBtn").addEventListener("click",()=>{
    merely checking that nothing threw.
 ========================================================= */
 
-$("runTestsBtn").addEventListener("click",runTests);
+if($("runTestsBtn")){
+  $("runTestsBtn").addEventListener("click",runTests);
+}
 
 
 function runTests(){
@@ -2455,48 +2685,53 @@ function downloadFile(filename,content,type){
    TEXT REPORT
 ========================================================= */
 
-$("downloadText").addEventListener("click",()=>{
+if($("downloadText")){
+  $("downloadText").addEventListener("click",()=>{
 
-  if(!currentAnalysis){
-    alert("Analyze a query first.");
-    return;
-  }
+    if(!currentAnalysis){
+      alert("Analyze a query first.");
+      return;
+    }
 
-  downloadFile("querylens-report.txt",getReportText(),"text/plain");
-});
+    downloadFile("querylens-report.txt",getReportText(),"text/plain");
+  });
+}
 
 
 /* =========================================================
    JSON REPORT
 ========================================================= */
 
-$("downloadJson").addEventListener("click",()=>{
+if($("downloadJson")){
+  $("downloadJson").addEventListener("click",()=>{
 
-  if(!currentAnalysis){
-    alert("Analyze a query first.");
-    return;
-  }
+    if(!currentAnalysis){
+      alert("Analyze a query first.");
+      return;
+    }
 
-  downloadFile(
-    "querylens-report.json",
-    JSON.stringify(currentAnalysis,null,2),
-    "application/json"
-  );
-});
+    downloadFile(
+      "querylens-report.json",
+      JSON.stringify(currentAnalysis,null,2),
+      "application/json"
+    );
+  });
+}
 
 
 /* =========================================================
    DOCUMENT REPORT
 ========================================================= */
 
-$("downloadDoc").addEventListener("click",()=>{
+if($("downloadDoc")){
+  $("downloadDoc").addEventListener("click",()=>{
 
-  if(!currentAnalysis){
-    alert("Analyze a query first.");
-    return;
-  }
+    if(!currentAnalysis){
+      alert("Analyze a query first.");
+      return;
+    }
 
-  const html = `
+    const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -2524,38 +2759,63 @@ pre{
 
 </body>
 </html>
-  `;
+    `;
 
-  downloadFile("querylens-report.doc",html,"application/msword");
-});
+    downloadFile("querylens-report.doc",html,"application/msword");
+  });
+}
 
 
 /* =========================================================
    PRINT / PDF
 ========================================================= */
 
-$("downloadPdf").addEventListener("click",()=>{
+if($("downloadPdf")){
+  $("downloadPdf").addEventListener("click",()=>{
 
-  if(!currentAnalysis){
-    alert("Analyze a query first.");
-    return;
-  }
+    if(!currentAnalysis){
+      alert("Analyze a query first.");
+      return;
+    }
 
-  window.print();
-});
+    window.print();
+  });
+}
 
 
 /* =========================================================
    KEYBOARD SHORTCUT
 ========================================================= */
 
-$("sqlInput").addEventListener("keydown",event=>{
+if($("sqlInput")){
+  $("sqlInput").addEventListener("keydown",event=>{
 
-  if((event.ctrlKey || event.metaKey) && event.key === "Enter"){
-    event.preventDefault();
-    analyzeQuery();
+    if((event.ctrlKey || event.metaKey) && event.key === "Enter"){
+      event.preventDefault();
+      analyzeQuery();
+    }
+  });
+}
+
+
+/* =========================================================
+   URL PARAMETER AUTO-RUNNER
+========================================================= */
+
+function checkUrlParameters(){
+  try{
+    const params = new URLSearchParams(window.location.search);
+    if(params.has("sql") && $("sqlInput")){
+      $("sqlInput").value = params.get("sql");
+      clearError();
+      analyzeQuery();
+      const target = document.getElementById("analyser");
+      if(target) target.scrollIntoView({ behavior:"smooth" });
+    }
+  }catch(e){
+    console.warn("Could not check URL parameters", e);
   }
-});
+}
 
 
 /* =========================================================
@@ -2573,6 +2833,12 @@ function init(){
   initTheme();
 
   initAvatars();
+
+  initFileUpload();
+
+  initDemoQueries();
+
+  checkUrlParameters();
 
   /* startQuizModule comes from quiz.js and is idempotent. */
   if(typeof startQuizModule === "function"){

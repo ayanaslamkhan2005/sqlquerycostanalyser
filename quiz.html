@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Quiz | QueryLens</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="nav-container">
+
+    <a href="index.html" class="logo">
+      <span class="logo-mark">
+        <i></i><i></i><i></i>
+      </span>
+      <span class="logo-text">Query<span>Lens</span></span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Analyze</a>
+      <a href="learn.html">Learn</a>
+      <a href="exam.html">Competitive Exam</a>
+      <a href="quiz.html" class="active">Quiz</a>
+      <a href="help.html">Help</a>
+      <a href="developed.html">Developed By</a>
+
+      <button class="nav-button quiz-nav-btn" id="quizBtn" type="button">QUIZ</button>
+
+      <div class="download-wrapper">
+        <button class="nav-button" id="downloadBtn" type="button">Download ▾</button>
+
+        <div class="download-menu" id="downloadMenu">
+          <button id="downloadText" type="button">Text Report</button>
+          <button id="downloadDoc" type="button">Document Report</button>
+          <button id="downloadJson" type="button">JSON Report</button>
+          <button id="downloadPdf" type="button">Print / Save PDF</button>
+        </div>
+      </div>
+
+      <button class="theme-toggle" id="themeToggle" type="button" title="Toggle Day/Night Mode">
+        <span id="themeIcon">☾</span>
+      </button>
+    </nav>
+
+    <button class="mobile-menu" id="mobileMenu" type="button">☰</button>
+
+  </div>
+</header>
+
+<main>
+
+<section class="section" style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center;">
+
+  <div class="page-intro-card" style="text-align: center; max-width: 800px;">
+    <span class="eyebrow">INTERACTIVE PRACTICE</span>
+    <h1>DBMS &amp; SQL Knowledge Quiz</h1>
+    <p>
+      Test your mastery of SQL optimization, selectivity arithmetic, access paths, and relational algebra.
+      Questions are drawn from our verified GATE PYQ question bank and generated dynamically from live catalog statistics.
+    </p>
+
+    <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+      <button class="primary-button" id="launchQuizPageBtn" type="button" onclick="if(typeof openQuizModal==='function') openQuizModal();">
+        🚀 Launch Quiz Now
+      </button>
+      <a href="exam.html" class="secondary-button">Browse 50 GATE PYQs →</a>
+      <a href="index.html" class="ghost-button">Back to Analyser</a>
+    </div>
+  </div>
+
+  <div style="width: min(800px, 100%); margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px;">
+    <div class="panel" style="padding: 20px; text-align: center;">
+      <span style="font-size: 2rem;">⚡</span>
+      <h4 style="margin: 8px 0 4px;">Dynamic Questions</h4>
+      <p style="font-size: 0.8rem; color: var(--muted);">Generated from live database statistics so the question pool never runs dry.</p>
+    </div>
+    <div class="panel" style="padding: 20px; text-align: center;">
+      <span style="font-size: 2rem;">🎯</span>
+      <h4 style="margin: 8px 0 4px;">Multi-Level</h4>
+      <p style="font-size: 0.8rem; color: var(--muted);">Choose Easy, Medium, or Hard difficulty to match your preparation level.</p>
+    </div>
+    <div class="panel" style="padding: 20px; text-align: center;">
+      <span style="font-size: 2rem;">📊</span>
+      <h4 style="margin: 8px 0 4px;">Instant Scorecard</h4>
+      <p style="font-size: 0.8rem; color: var(--muted);">Detailed performance review and downloadable text scorecard report.</p>
+    </div>
+  </div>
+
+</section>
+
+</main>
+
+<!-- ================= QUIZ MODAL ================= -->
+
+<div id="quizModal" class="quiz-modal">
+  <div class="quiz-dialog">
+    <button class="quiz-close" id="quizCloseBtn" type="button">✕</button>
+
+    <div id="quizSetup">
+      <span class="eyebrow">QUIZ</span>
+      <h3>Configure your quiz</h3>
+      <p>Select the number of questions and a difficulty level.</p>
+
+      <label class="quiz-field">
+        <span>Number of questions</span>
+        <input type="number" id="quizCount" min="1" max="25" value="5" />
+      </label>
+
+      <label class="quiz-field">
+        <span>Difficulty level</span>
+        <select id="quizDifficulty">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </label>
+
+      <button class="primary-button" id="quizStartBtn" type="button">Begin Quiz</button>
+    </div>
+
+    <div id="quizPlay" class="hidden">
+      <div class="quiz-progress" id="quizProgress"></div>
+      <h3 id="quizQuestion"></h3>
+      <span class="exam-tag" id="quizTag"></span>
+      <div id="quizOptions" class="quiz-options"></div>
+      <div id="quizFeedback" class="quiz-feedback hidden"></div>
+      <button class="primary-button small hidden" id="quizNextBtn" type="button">Next Question</button>
+    </div>
+
+    <div id="quizSummary" class="hidden"></div>
+  </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <div class="logo">
+        <span class="logo-mark"><i></i><i></i><i></i></span>
+        <span class="logo-text">Query<span>Lens</span></span>
+      </div>
+      <p>SQL Query Cost Analyser</p>
+    </div>
+
+    <div class="footer-info">
+      <p>DBMS DA1 Project</p>
+      <p>Guided by Dr. Swaminathan A</p>
+    </div>
+
+    <div class="footer-copy">
+      <p>© 2026 QueryLens</p>
+    </div>
+  </div>
+</footer>
+
+<script src="cost-model.js"></script>
+<script src="exam-bank.js"></script>
+<script src="script.js"></script>
+<script src="quiz.js"></script>
+
+<script>
+  // Automatically open quiz configuration when loading quiz.html
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      if(typeof openQuizModal === 'function') {
+        openQuizModal();
+      }
+    }, 150);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developed By | QueryLens Team</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="nav-container">
+
+    <a href="index.html" class="logo">
+      <span class="logo-mark">
+        <i></i><i></i><i></i>
+      </span>
+      <span class="logo-text">Query<span>Lens</span></span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Analyze</a>
+      <a href="learn.html">Learn</a>
+      <a href="exam.html">Competitive Exam</a>
+      <a href="quiz.html">Quiz</a>
+      <a href="help.html">Help</a>
+      <a href="developed.html" class="active">Developed By</a>
+
+      <a href="quiz.html" class="nav-button quiz-nav-btn" id="quizBtn" type="button">QUIZ</a>
+
+      <div class="download-wrapper">
+        <button class="nav-button" id="downloadBtn" type="button">Download ▾</button>
+
+        <div class="download-menu" id="downloadMenu">
+          <button id="downloadText" type="button">Text Report</button>
+          <button id="downloadDoc" type="button">Document Report</button>
+          <button id="downloadJson" type="button">JSON Report</button>
+          <button id="downloadPdf" type="button">Print / Save PDF</button>
+        </div>
+      </div>
+
+      <button class="theme-toggle" id="themeToggle" type="button" title="Toggle Day/Night Mode">
+        <span id="themeIcon">☾</span>
+      </button>
+    </nav>
+
+    <button class="mobile-menu" id="mobileMenu" type="button">☰</button>
+
+  </div>
+</header>
+
+<main>
+
+<section class="section">
+
+  <div class="page-intro-card">
+    <span class="eyebrow">DEVELOPED BY</span>
+    <h1>Project Team &amp; Academic Context</h1>
+    <p>
+      QueryLens was conceived and developed as a Database Management Systems (DBMS) DA1 Project by students of Computer Science and Engineering at Vellore Institute of Technology (VIT), under the mentorship and guidance of Dr. Swaminathan A.
+    </p>
+    <div style="display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap;">
+      <a href="index.html" class="primary-button small">⚡ Open Query Analyser</a>
+      <a href="exam.html" class="secondary-button small">50 GATE DBMS PYQs →</a>
+      <a href="https://github.com/ayanaslamkhan2005/sqlquerycostanalyser" target="_blank" class="ghost-button small">GitHub Repository ↗</a>
+    </div>
+  </div>
+
+  <div class="team-grid">
+
+    <article class="team-card">
+
+      <div class="avatar-wrap">
+        <img
+          src="images/ayan.jpg"
+          alt="Ayan Aslam Khan"
+          class="avatar-photo"
+          width="400" height="400"
+          loading="lazy" />
+        <span class="avatar-fallback">AA</span>
+      </div>
+
+      <h3>Ayan Aslam Khan</h3>
+
+      <p class="team-reg">Register No: 25BCE5356</p>
+
+      <p class="team-role">Cost model &amp; query engine</p>
+
+    </article>
+
+
+    <article class="team-card">
+
+      <div class="avatar-wrap">
+        <img
+          src="images/devansh.jpg"
+          alt="Devansh Ginoria"
+          class="avatar-photo"
+          width="400" height="400"
+          loading="lazy" />
+        <span class="avatar-fallback">DG</span>
+      </div>
+
+      <h3>Devansh Ginoria</h3>
+
+      <p class="team-reg">Register No: 25BCE5566</p>
+
+      <p class="team-role">Interface &amp; visualisation</p>
+
+    </article>
+
+
+    <article class="team-card">
+
+      <div class="avatar-wrap">
+        <img
+          src="images/shaurya.jpg"
+          alt="Shaurya Singh Panwar"
+          class="avatar-photo"
+          width="400" height="400"
+          loading="lazy" />
+        <span class="avatar-fallback">SP</span>
+      </div>
+
+      <h3>Shaurya Singh Panwar</h3>
+
+      <p class="team-reg">Register No: 25BCE5255</p>
+
+      <p class="team-role">Question bank &amp; testing</p>
+
+    </article>
+
+
+    <article class="team-card guide-card">
+
+      <span class="guide-label">GUIDED BY</span>
+
+      <div class="avatar-wrap">
+        <img
+          src="images/guide.jpg"
+          alt="Dr. Swaminathan A"
+          class="avatar-photo"
+          width="400" height="400"
+          loading="lazy" />
+        <span class="avatar-fallback">SA</span>
+      </div>
+
+      <h3>Dr. Swaminathan A</h3>
+
+      <p class="team-reg">Assistant Professor</p>
+
+      <p class="team-role">Project Guide</p>
+
+    </article>
+
+  </div>
+
+
+  <!-- PROJECT ARCHITECTURE & DESIGN -->
+
+  <div class="panel" style="width: min(1200px, 100%); margin: 50px auto 0; padding: 35px;">
+
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="panel-number">✦</span>
+        <div>
+          <h3>Technical Architecture</h3>
+          <p>Key highlights of the QueryLens software design</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 20px;">
+      <div style="background: var(--surface2); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+        <h4 style="color: var(--primary); margin-bottom: 8px;">1. Cardinality-Aware Cost Model</h4>
+        <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">
+          Modeled on PostgreSQL and SQLite query planners. Estimates column distinct value frequencies, evaluates predicate selectivity, and computes simulated page I/O and CPU operator costs.
+        </p>
+      </div>
+
+      <div style="background: var(--surface2); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+        <h4 style="color: var(--primary); margin-bottom: 8px;">2. Zero-Server Browser Execution</h4>
+        <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">
+          All AST parsing, SQL condition evaluation, query planning, plan tree generation, and live execution runs completely client-side in vanilla JavaScript with maximum privacy.
+        </p>
+      </div>
+
+      <div style="background: var(--surface2); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+        <h4 style="color: var(--primary); margin-bottom: 8px;">3. 50 Authentic GATE DBMS PYQs</h4>
+        <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">
+          Curated past-year question bank spanning Sections A through G (ER Models, Normalization, SQL, Relational Algebra, Concurrency Control, Indexing, and WAL Recovery) with step-by-step solutions.
+        </p>
+      </div>
+
+      <div style="background: var(--surface2); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+        <h4 style="color: var(--primary); margin-bottom: 8px;">4. Multi-Page Modular Experience</h4>
+        <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">
+          Separated clean pages for Analysis, Learning, Competitive Exams, Quiz practice, Documentation, and Credits, with drag-and-drop file upload, live reports, and theme persistence.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <div class="logo">
+        <span class="logo-mark"><i></i><i></i><i></i></span>
+        <span class="logo-text">Query<span>Lens</span></span>
+      </div>
+      <p>SQL Query Cost Analyser</p>
+    </div>
+
+    <div class="footer-info">
+      <p>DBMS DA1 Project</p>
+      <p>Guided by Dr. Swaminathan A</p>
+    </div>
+
+    <div class="footer-copy">
+      <p>© 2026 QueryLens</p>
+    </div>
+  </div>
+</footer>
+
+<script src="cost-model.js"></script>
+<script src="script.js"></script>
+<script src="quiz.js"></script>
+
+</body>
+</html>

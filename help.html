@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Help &amp; Documentation | QueryLens</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="nav-container">
+
+    <a href="index.html" class="logo">
+      <span class="logo-mark">
+        <i></i><i></i><i></i>
+      </span>
+      <span class="logo-text">Query<span>Lens</span></span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Analyze</a>
+      <a href="learn.html">Learn</a>
+      <a href="exam.html">Competitive Exam</a>
+      <a href="quiz.html">Quiz</a>
+      <a href="help.html" class="active">Help</a>
+      <a href="developed.html">Developed By</a>
+
+      <a href="quiz.html" class="nav-button quiz-nav-btn" id="quizBtn" type="button">QUIZ</a>
+
+      <div class="download-wrapper">
+        <button class="nav-button" id="downloadBtn" type="button">Download ▾</button>
+
+        <div class="download-menu" id="downloadMenu">
+          <button id="downloadText" type="button">Text Report</button>
+          <button id="downloadDoc" type="button">Document Report</button>
+          <button id="downloadJson" type="button">JSON Report</button>
+          <button id="downloadPdf" type="button">Print / Save PDF</button>
+        </div>
+      </div>
+
+      <button class="theme-toggle" id="themeToggle" type="button" title="Toggle Day/Night Mode">
+        <span id="themeIcon">☾</span>
+      </button>
+    </nav>
+
+    <button class="mobile-menu" id="mobileMenu" type="button">☰</button>
+
+  </div>
+</header>
+
+<main>
+
+<section class="section">
+
+  <div class="page-intro-card">
+    <span class="eyebrow">HELP &amp; DOCUMENTATION</span>
+    <h1>How to Use QueryLens</h1>
+    <p>Follow these steps to analyze SQL queries, upload SQL files, interpret cost estimation, and practice competitive exam questions.</p>
+    <div style="display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap;">
+      <a href="index.html" class="primary-button small">⚡ Open Query Analyser</a>
+      <a href="exam.html" class="secondary-button small">50 GATE DBMS PYQs →</a>
+      <a href="#faq" class="ghost-button small">Browse FAQs ↓</a>
+    </div>
+  </div>
+
+  <div class="help-grid">
+
+    <article class="help-step">
+      <span>01</span>
+      <h3>Enter or Upload SQL</h3>
+      <p>
+        Type a SELECT query into the editor, pick from our ready-made <strong>Demo Queries</strong> dropdown, or click <strong>📂 Upload .sql</strong> to upload your own SQL file directly.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>02</span>
+      <h3>Analyze Query &amp; Cost</h3>
+      <p>
+        Click Analyze Query, or press Ctrl and Enter together. QueryLens
+        parses the SQL and runs it against its in-browser dataset, instantly calculating computational cost.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>03</span>
+      <h3>Check the Score</h3>
+      <p>
+        The score runs from 1 to 100, where higher is cheaper. Read it
+        alongside the estimated cost, execution time and rows returned.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>04</span>
+      <h3>Read the Cardinality</h3>
+      <p>
+        Selectivity is the fraction of rows your filter keeps. Estimated
+        Rows is how many survive. Index Used names the index column, or
+        reads "none" when a full scan is required.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>05</span>
+      <h3>Study the Execution Plan</h3>
+      <p>
+        Each line shows one operator with its estimated rows, its cost and
+        its share of the total. The cost chart ranks the same operators so
+        you can see where the work concentrates.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>06</span>
+      <h3>Apply the Advice</h3>
+      <p>
+        The Optimization Advisor explains what it found. Suggested Rewrites
+        gives copy-ready SQL and CREATE INDEX statements to run against
+        your own database.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>07</span>
+      <h3>Verify with Tests</h3>
+      <p>
+        Click Run Tests to execute built-in cases covering filters, joins,
+        aggregates, operator precedence and invalid input. Each case
+        asserts a specific expected outcome.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>08</span>
+      <h3>Download a Report</h3>
+      <p>
+        Use the Download menu for Text, Document, JSON or printable PDF.
+        The report records your input, the plan, the cost breakdown, the
+        recommendations and sample output rows.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>09</span>
+      <h3>Take the Quiz</h3>
+      <p>
+        Navigate to Quiz, choose how many questions you
+        want and pick Easy, Medium or Hard. Answer one question at a time;
+        each is marked immediately with an explanation.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>10</span>
+      <h3>Practise 50 GATE PYQs</h3>
+      <p>
+        Open Competitive Exam, search or filter by sections A–G, then select an
+        option on any question. The correct answer and a step-by-step
+        solution appear once you have chosen.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>11</span>
+      <h3>Switch Day or Night</h3>
+      <p>
+        Use the sun and moon button at the top right. Your choice is
+        remembered in this browser for next time.
+      </p>
+    </article>
+
+    <article class="help-step">
+      <span>12</span>
+      <h3>Reuse Past Queries</h3>
+      <p>
+        Analysis History lists your ten most recent queries. Click any
+        entry to load and re-run it.
+      </p>
+    </article>
+
+  </div>
+
+
+  <div class="faq-section" id="faq">
+
+    <div class="section-heading small-heading">
+
+      <div>
+        <span class="eyebrow">FAQ</span>
+        <h3>Frequently Asked Questions</h3>
+      </div>
+
+    </div>
+
+
+    <div class="faq-grid">
+
+      <details>
+        <summary>How do I upload a SQL file to estimate cost?</summary>
+        <p>
+          Click the <strong>📂 Upload .sql</strong> button in the SQL Input panel or drag and drop your <code>.sql</code> or <code>.txt</code> file directly onto the editor. QueryLens will read the file and automatically compute the execution plan and cost score.
+        </p>
+      </details>
+
+      <details>
+        <summary>Is QueryLens completely browser-based?</summary>
+        <p>
+          Yes. All parsing, execution and costing run in JavaScript inside
+          your browser. Nothing is sent to a server.
+        </p>
+      </details>
+
+      <details>
+        <summary>Does QueryLens use a real database server?</summary>
+        <p>
+          No. It generates a demonstration dataset in browser memory each
+          time the page loads, using fixed seeds so results stay reproducible.
+        </p>
+      </details>
+
+      <details>
+        <summary>What SQL statements are supported?</summary>
+        <p>
+          SELECT queries with WHERE, AND, OR, NOT, parentheses, IN,
+          comparison operators, INNER JOIN, LEFT JOIN, GROUP BY, HAVING,
+          COUNT, SUM, AVG, MIN, MAX, ORDER BY and LIMIT.
+        </p>
+      </details>
+
+      <details>
+        <summary>What does the Query Score mean?</summary>
+        <p>
+          Scores run from 1 to 100, where 100 is best. They reward index
+          usage, low selectivity and small result sets, and penalise full
+          scans on large tables, unindexed joins and large sorts.
+        </p>
+      </details>
+
+      <details>
+        <summary>How is Selectivity calculated?</summary>
+        <p>
+          Selectivity is the fraction of rows expected to satisfy a WHERE
+          condition. For an equality test on an indexed column with V
+          distinct values, selectivity is 1/V. QueryLens multiplies
+          selectivity by table cardinality to predict surviving rows.
+        </p>
+      </details>
+
+      <details>
+        <summary>Why does QueryLens recommend CREATE INDEX statements?</summary>
+        <p>
+          When a query filters or joins on an unindexed column, QueryLens
+          detects the full scan and suggests an index that would turn that
+          scan into a direct lookup.
+        </p>
+      </details>
+
+      <details>
+        <summary>Can I print or save a PDF of my analysis?</summary>
+        <p>
+          Yes. Choose Print / Save PDF from the Download menu, then select
+          "Save as PDF" in your browser's print dialog. The print style sheet
+          formats your analysis neatly on the page.
+        </p>
+      </details>
+
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <div class="logo">
+        <span class="logo-mark"><i></i><i></i><i></i></span>
+        <span class="logo-text">Query<span>Lens</span></span>
+      </div>
+      <p>SQL Query Cost Analyser</p>
+    </div>
+
+    <div class="footer-info">
+      <p>DBMS DA1 Project</p>
+      <p>Guided by Dr. Swaminathan A</p>
+    </div>
+
+    <div class="footer-copy">
+      <p>© 2026 QueryLens</p>
+    </div>
+  </div>
+</footer>
+
+<script src="cost-model.js"></script>
+<script src="script.js"></script>
+<script src="quiz.js"></script>
+
+</body>
+</html>

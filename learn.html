@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn SQL Optimization &amp; Query Cost | QueryLens</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="nav-container">
+
+    <a href="index.html" class="logo">
+      <span class="logo-mark">
+        <i></i><i></i><i></i>
+      </span>
+      <span class="logo-text">Query<span>Lens</span></span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Analyze</a>
+      <a href="learn.html" class="active">Learn</a>
+      <a href="exam.html">Competitive Exam</a>
+      <a href="quiz.html">Quiz</a>
+      <a href="help.html">Help</a>
+      <a href="developed.html">Developed By</a>
+
+      <a href="quiz.html" class="nav-button quiz-nav-btn" id="quizBtn" type="button">QUIZ</a>
+
+      <div class="download-wrapper">
+        <button class="nav-button" id="downloadBtn" type="button">Download ▾</button>
+
+        <div class="download-menu" id="downloadMenu">
+          <button id="downloadText" type="button">Text Report</button>
+          <button id="downloadDoc" type="button">Document Report</button>
+          <button id="downloadJson" type="button">JSON Report</button>
+          <button id="downloadPdf" type="button">Print / Save PDF</button>
+        </div>
+      </div>
+
+      <button class="theme-toggle" id="themeToggle" type="button" title="Toggle Day/Night Mode">
+        <span id="themeIcon">☾</span>
+      </button>
+    </nav>
+
+    <button class="mobile-menu" id="mobileMenu" type="button">☰</button>
+
+  </div>
+</header>
+
+<main>
+
+<section class="section">
+
+  <div class="page-intro-card">
+    <span class="eyebrow">DBMS • QUERY OPTIMIZATION</span>
+    <h1>Understand SQL Query Optimization</h1>
+    <p>
+      Learn how modern relational database engines process SQL queries, estimate execution costs, and why indexes, filtering, joins and sorting affect performance.
+    </p>
+    <div style="display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap;">
+      <a href="index.html" class="primary-button small">⚡ Open Query Analyser</a>
+      <a href="exam.html" class="secondary-button small">50 GATE DBMS PYQs →</a>
+      <a href="quiz.html" class="ghost-button small">Take Quiz</a>
+    </div>
+  </div>
+
+  <div class="learn-grid">
+
+    <article class="learn-card large">
+
+      <span class="learn-number">01</span>
+
+      <h3>What is Query Cost?</h3>
+
+      <p>
+        Query cost represents the amount of computational work associated
+        with executing a database query. Database optimizers consider
+        different execution strategies before choosing a plan.
+      </p>
+
+      <p>
+        QueryLens uses an educational cost model. It estimates how many
+        rows survive each filter using table statistics, then charges every
+        plan operator for the page reads and CPU work it performs.
+      </p>
+
+      <div class="concept-points">
+
+        <div>
+          <strong>Table Scan</strong>
+          <span>Reads every row of a table to find matching records.</span>
+        </div>
+
+        <div>
+          <strong>Index Search</strong>
+          <span>Uses an index to seek directly to the matching range.</span>
+        </div>
+
+        <div>
+          <strong>Selectivity</strong>
+          <span>The fraction of rows a predicate is expected to keep.</span>
+        </div>
+
+        <div>
+          <strong>Join</strong>
+          <span>Combines records from two or more tables.</span>
+        </div>
+
+        <div>
+          <strong>Temporary Structure</strong>
+          <span>Needed for sorting, grouping or distinct operations.</span>
+        </div>
+
+        <div>
+          <strong>Cardinality</strong>
+          <span>The estimated number of rows flowing out of an operator.</span>
+        </div>
+
+      </div>
+
+    </article>
+
+
+    <article class="learn-card">
+
+      <span class="learn-number">02</span>
+
+      <h3>How QueryLens Works</h3>
+
+      <div class="process-flow">
+
+        <div><span>1</span><p>SQL Input</p></div>
+        <div><span>2</span><p>Parsing</p></div>
+        <div><span>3</span><p>Execution</p></div>
+        <div><span>4</span><p>Costing</p></div>
+        <div><span>5</span><p>Visualization</p></div>
+
+      </div>
+
+    </article>
+
+
+    <article class="learn-card">
+
+      <span class="learn-number">03</span>
+
+      <h3>Important Terms</h3>
+
+      <div class="term-list">
+
+        <div>
+          <strong>SELECT</strong>
+          <p>Retrieves data from one or more tables.</p>
+        </div>
+
+        <div>
+          <strong>WHERE</strong>
+          <p>Filters rows before grouping takes place.</p>
+        </div>
+
+        <div>
+          <strong>JOIN</strong>
+          <p>Combines related data from multiple tables.</p>
+        </div>
+
+        <div>
+          <strong>GROUP BY</strong>
+          <p>Groups rows so aggregate functions can be applied.</p>
+        </div>
+
+        <div>
+          <strong>HAVING</strong>
+          <p>Filters the groups after aggregation.</p>
+        </div>
+
+      </div>
+
+    </article>
+
+  </div>
+
+
+  <!-- VIDEO -->
+
+  <div class="learning-video">
+
+    <div class="video-heading">
+
+      <span class="eyebrow">EDUCATIONAL VIDEO</span>
+
+      <h3>SQL Fundamentals &amp; Query Processing</h3>
+
+    </div>
+
+    <div class="video-wrapper">
+
+      <iframe
+        src="https://www.youtube.com/embed/HXV3zeQKqGY"
+        title="SQL Tutorial"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
+
+    </div>
+
+  </div>
+
+
+  <!-- REFERENCES -->
+
+  <div class="references">
+
+    <div class="section-heading small-heading">
+
+      <div>
+        <span class="eyebrow">REFERENCES</span>
+        <h3>Further Learning Resources</h3>
+      </div>
+
+    </div>
+
+
+    <div class="reference-grid">
+
+      <a href="https://www.sqlite.org/queryplanner.html"
+         target="_blank"
+         class="reference-card">
+
+        <span>WEBSITE</span>
+
+        <h4>SQLite Query Planner</h4>
+
+        <p>
+          Official documentation explaining query planning and indexing.
+        </p>
+
+      </a>
+
+
+      <a href="https://www.sqlite.org/eqp.html"
+         target="_blank"
+         class="reference-card">
+
+        <span>DOCUMENTATION</span>
+
+        <h4>SQLite EXPLAIN QUERY PLAN</h4>
+
+        <p>
+          Documentation explaining SQLite's execution-plan output.
+        </p>
+
+      </a>
+
+
+      <a href="https://www.postgresql.org/docs/current/planner-stats.html"
+         target="_blank"
+         class="reference-card">
+
+        <span>DOCUMENTATION</span>
+
+        <h4>PostgreSQL Planner Statistics</h4>
+
+        <p>
+          How a production optimiser uses statistics to estimate row counts.
+        </p>
+
+      </a>
+
+
+      <a href="https://www.w3schools.com/sql/"
+         target="_blank"
+         class="reference-card">
+
+        <span>WEBSITE</span>
+
+        <h4>W3Schools SQL</h4>
+
+        <p>
+          SQL syntax, joins, filtering, grouping and database fundamentals.
+        </p>
+
+      </a>
+
+
+      <a href="https://www.geeksforgeeks.org/dbms/"
+         target="_blank"
+         class="reference-card">
+
+        <span>EDUCATIONAL RESOURCE</span>
+
+        <h4>GeeksforGeeks DBMS</h4>
+
+        <p>
+          DBMS concepts including query processing and optimization.
+        </p>
+
+      </a>
+
+
+      <a href="https://gate.iitkgp.ac.in/"
+         target="_blank"
+         class="reference-card">
+
+        <span>OFFICIAL PAPERS</span>
+
+        <h4>GATE Question Papers</h4>
+
+        <p>
+          Official GATE papers and answer keys for verifying exam questions.
+        </p>
+
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <!-- QUIZ CALL TO ACTION -->
+
+  <div class="quiz-cta">
+
+    <div>
+      <span class="eyebrow">TEST YOURSELF</span>
+      <h3>Interactive Quiz</h3>
+      <p>
+        Choose how many questions you want and pick a difficulty level.
+        Questions are drawn from a curated DBMS bank and from a generator
+        that builds new questions out of the live cost-model statistics.
+        You get instant feedback and a full explanation after every answer.
+      </p>
+    </div>
+
+    <a href="quiz.html" class="primary-button" id="quizBtnLearn">Start Quiz →</a>
+
+  </div>
+
+</section>
+
+</main>
+
+<!-- ================= QUIZ MODAL ================= -->
+
+<div id="quizModal" class="quiz-modal">
+  <div class="quiz-dialog">
+    <button class="quiz-close" id="quizCloseBtn" type="button">✕</button>
+
+    <div id="quizSetup">
+      <span class="eyebrow">QUIZ</span>
+      <h3>Configure your quiz</h3>
+      <p>Select the number of questions and a difficulty level.</p>
+
+      <label class="quiz-field">
+        <span>Number of questions</span>
+        <input type="number" id="quizCount" min="1" max="25" value="5" />
+      </label>
+
+      <label class="quiz-field">
+        <span>Difficulty level</span>
+        <select id="quizDifficulty">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </label>
+
+      <button class="primary-button" id="quizStartBtn" type="button">Begin Quiz</button>
+    </div>
+
+    <div id="quizPlay" class="hidden">
+      <div class="quiz-progress" id="quizProgress"></div>
+      <h3 id="quizQuestion"></h3>
+      <span class="exam-tag" id="quizTag"></span>
+      <div id="quizOptions" class="quiz-options"></div>
+      <div id="quizFeedback" class="quiz-feedback hidden"></div>
+      <button class="primary-button small hidden" id="quizNextBtn" type="button">Next Question</button>
+    </div>
+
+    <div id="quizSummary" class="hidden"></div>
+  </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <div class="logo">
+        <span class="logo-mark"><i></i><i></i><i></i></span>
+        <span class="logo-text">Query<span>Lens</span></span>
+      </div>
+      <p>SQL Query Cost Analyser</p>
+    </div>
+
+    <div class="footer-info">
+      <p>DBMS DA1 Project</p>
+      <p>Guided by Dr. Swaminathan A</p>
+    </div>
+
+    <div class="footer-copy">
+      <p>© 2026 QueryLens</p>
+    </div>
+  </div>
+</footer>
+
+<script src="cost-model.js"></script>
+<script src="script.js"></script>
+<script src="quiz.js"></script>
+
+</body>
+</html>
