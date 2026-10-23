@@ -91,8 +91,7 @@ function stripQuotes(value){
 }
 
 
-/* Splits on commas that are outside quotes AND outside parentheses,
-   so COUNT(a, b) and IN (1,2,3) survive intact. */
+/* Splits on commas outside quotes AND outside parentheses. */
 function splitCSV(text){
 
   const result = [];
@@ -128,7 +127,7 @@ function splitCSV(text){
 }
 
 
-/* True if the string contains a character outside of quoted literals. */
+/* True if the string contains a character outside quoted literals. */
 function containsOutsideQuotes(text,char){
 
   let quote = null;
@@ -167,9 +166,6 @@ function generateDatabase(){
   DB.products = [];
   DB.orders = [];
 
-
-  /* CUSTOMERS */
-
   for(let i = 1; i <= 3000; i++){
     DB.customers.push({
       id:i,
@@ -181,9 +177,6 @@ function generateDatabase(){
     });
   }
 
-
-  /* PRODUCTS */
-
   for(let i = 1; i <= 500; i++){
     DB.products.push({
       id:i,
@@ -192,9 +185,6 @@ function generateDatabase(){
       price:Number((20 + Math.random() * 1980).toFixed(2))
     });
   }
-
-
-  /* ORDERS */
 
   for(let i = 1; i <= 25000; i++){
 
@@ -366,10 +356,6 @@ if($("themeToggle")){
 
 /* =========================================================
    AVATAR FALLBACK
-
-   If a team photo is missing or fails to load, hide the
-   image so the gradient block and initials show instead
-   of a broken-image icon.
 ========================================================= */
 
 function initAvatars(){
@@ -380,7 +366,6 @@ function initAvatars(){
 
     img.addEventListener("error",hide);
 
-    /* Catch images that already failed before this ran. */
     if(img.complete && img.naturalWidth === 0){
       hide();
     }
@@ -449,8 +434,6 @@ function validateSQL(sql){
     );
   }
 
-  /* Only reject semicolons that sit outside string literals, so a
-     value such as 'a;b' no longer trips the multi-statement check. */
   if(containsOutsideQuotes(normalized,";")){
     throw new Error("Multiple SQL statements are not supported.");
   }
@@ -459,7 +442,6 @@ function validateSQL(sql){
     throw new Error("The query must contain a FROM clause.");
   }
 
-  /* Balanced parentheses check. */
   let depth = 0;
   let quote = null;
 
@@ -543,11 +525,6 @@ function parseValue(value){
 
 /* =========================================================
    COLUMN RESOLUTION
-
-   Rows carry both qualified keys ("orders.amount") and plain
-   keys ("amount"). A qualified reference resolves to the
-   qualified key first, which removes the ambiguity that used
-   to make c.id and o.id collide after a join.
 ========================================================= */
 
 function getColumnValue(row,column){
@@ -564,7 +541,6 @@ function getColumnValue(row,column){
     return row[bare];
   }
 
-  /* Last resort: a uniquely matching qualified key. */
   const matches = Object.keys(row).filter(
     k => k.endsWith(`.${bare}`)
   );
@@ -579,10 +555,6 @@ function getColumnValue(row,column){
 
 /* =========================================================
    WHERE TOKENIZER
-
-   Produces grouping parentheses, boolean keywords and opaque
-   predicate chunks. Parentheses that belong to a predicate
-   (IN lists, function calls) are absorbed into the chunk.
 ========================================================= */
 
 function tokenizeCondition(text){
@@ -629,7 +601,6 @@ function tokenizeCondition(text){
         continue;
       }
 
-      /* Predicate-owned parenthesis: copy the balanced group. */
       let depth = 0;
       let inner = "";
 
@@ -653,8 +624,6 @@ function tokenizeCondition(text){
       continue;
     }
 
-    /* Boolean keywords. NOT is only a connector when it does not
-       belong to NOT NULL / NOT LIKE / NOT IN / NOT BETWEEN. */
     const rest = text.slice(i);
 
     const andMatch = rest.match(/^\s+AND\s+/i);
@@ -695,10 +664,6 @@ function tokenizeCondition(text){
 
 /* =========================================================
    WHERE PARSER (recursive descent)
-
-   expr   := term (OR term)*
-   term   := factor (AND factor)*
-   factor := NOT factor | "(" expr ")" | predicate
 ========================================================= */
 
 function parseCondition(text){
@@ -771,17 +736,11 @@ function parseCondition(text){
 
 /* =========================================================
    PREDICATE EVALUATION
-
-   Throws on predicates it does not recognise, instead of the
-   previous behaviour of silently returning true and letting
-   every row through.
 ========================================================= */
 
 function compareValues(left,operator,right){
 
   if(left === undefined || left === null || right === null){
-    /* SQL three-valued logic: comparisons with NULL are UNKNOWN,
-       which behaves as false in a WHERE clause. */
     return false;
   }
 
@@ -828,6 +787,10 @@ function likeToRegExp(pattern){
 }
 
 
+/* Cache for parsed IN lists (makes subquery results fast). */
+const IN_LIST_CACHE = new Map();
+
+
 function evaluatePredicate(row,predicate){
 
   const text = predicate.trim().replace(/^\((.*)\)$/s,"$1").trim();
@@ -861,14 +824,23 @@ function evaluatePredicate(row,predicate){
 
   if(match){
     const value = getColumnValue(row,match[1]);
-    const list = splitCSV(match[3]).map(parseValue);
 
-    const found = list.some(item=>{
-      if(typeof value === "string" && typeof item === "string"){
-        return value.toLowerCase() === item.toLowerCase();
-      }
-      return value == item;
-    });
+    let set = IN_LIST_CACHE.get(match[3]);
+
+    if(!set){
+      set = new Set(
+        splitCSV(match[3])
+          .map(parseValue)
+          .filter(v => v !== null)
+          .map(v => String(v).toLowerCase())
+      );
+      if(IN_LIST_CACHE.size > 50) IN_LIST_CACHE.clear();
+      IN_LIST_CACHE.set(match[3],set);
+    }
+
+    const found =
+      value !== null && value !== undefined &&
+      set.has(String(value).toLowerCase());
 
     return match[2] ? !found : found;
   }
@@ -895,8 +867,6 @@ function evaluatePredicate(row,predicate){
     const left = getColumnValue(row,match[1]);
     const rawRight = match[3].trim();
 
-    /* If the right side names a column present in the row, compare
-       column to column rather than column to literal. */
     let right;
 
     if(/^[\w.]+$/.test(rawRight) && !/^-?\d/.test(rawRight)){
@@ -928,7 +898,6 @@ function evaluateNode(row,node){
 }
 
 
-/* Compiles once, then evaluates per row. */
 function compileWhere(where){
 
   if(!where){
@@ -941,7 +910,6 @@ function compileWhere(where){
 }
 
 
-/* Kept for backward compatibility with any external caller. */
 function evaluateWhere(row,where){
   return compileWhere(where)(row);
 }
@@ -978,11 +946,7 @@ function extractLimit(sql){
 
 
 /* =========================================================
-   JOIN PROCESSING
-
-   Handles every JOIN in the statement, not just the first,
-   and uses a hash join instead of the previous O(n*m) pair
-   of nested loops.
+   JOIN PROCESSING (hash join)
 ========================================================= */
 
 function performJoins(rows,sql,baseAlias){
@@ -1015,7 +979,6 @@ function performJoins(rows,sql,baseAlias){
     const refA = match[4].toLowerCase();
     const refB = match[5].toLowerCase();
 
-    /* Work out which side belongs to the table being joined in. */
     const prefixA = refA.includes(".") ? refA.split(".")[0] : null;
     const prefixB = refB.includes(".") ? refB.split(".")[0] : null;
 
@@ -1027,8 +990,6 @@ function performJoins(rows,sql,baseAlias){
     }else if(prefixA === alias || prefixA === joinTable){
       outerRef = refB; innerRef = refA;
     }else{
-      /* Unprefixed: decide by which column actually exists inside
-         the joined table. */
       const sample = target[0] || {};
       const bareA = refA.split(".").pop();
       const bareB = refB.split(".").pop();
@@ -1046,7 +1007,6 @@ function performJoins(rows,sql,baseAlias){
 
     const innerColumn = innerRef.split(".").pop();
 
-    /* Build the hash table on the inner relation. */
     const buckets = new Map();
 
     for(const innerRow of target){
@@ -1080,7 +1040,6 @@ function performJoins(rows,sql,baseAlias){
 
         for(const [key,value] of Object.entries(innerRow)){
           merged[`${alias}.${key}`] = value;
-          /* Keep a bare alias only when it is still unambiguous. */
           if(!(key in merged)){
             merged[key] = value;
           }
@@ -1139,7 +1098,6 @@ function applyOrder(rows,orderText){
       const reference = match[1].toLowerCase();
       const direction = (match[2] || "ASC").toUpperCase();
 
-      /* Prefer the projected alias, then fall back to a column. */
       const av = Object.prototype.hasOwnProperty.call(a,reference)
         ? a[reference]
         : getColumnValue(a,reference);
@@ -1279,7 +1237,7 @@ function executeSelect(rows,selectPart,options){
       const clean = {};
 
       for(const [key,value] of Object.entries(row)){
-        if(!key.startsWith("__")){
+        if(!key.startsWith("__") && !key.includes(".")){
           clean[key] = value;
         }
       }
@@ -1294,9 +1252,6 @@ function executeSelect(rows,selectPart,options){
     /^(COUNT|SUM|AVG|MIN|MAX)\s*\(/i.test(expression.trim())
   );
 
-  /* A bare aggregate with no GROUP BY collapses the whole input
-     into exactly one output row. The previous build emitted one
-     row per input row here. */
   const sourceRows =
     hasAggregate && !grouped
       ? [{ __groupRows:rows, ...(rows[0] || {}) }]
@@ -1344,6 +1299,104 @@ function executeSelect(rows,selectPart,options){
 
 
 /* =========================================================
+   SQL FILE SPLITTING
+   Removes comments and splits on semicolons outside quotes.
+========================================================= */
+
+function splitSQLStatements(text){
+
+  const cleaned = String(text || "")
+    .replace(/^\uFEFF/,"")
+    .replace(/\/\*[\s\S]*?\*\//g,"")
+    .replace(/--[^\r\n]*/g,"");
+
+  const out = [];
+  let current = "";
+  let quote = null;
+
+  for(const ch of cleaned){
+
+    if(ch === "'" || ch === '"'){
+      if(quote === ch){ quote = null; }
+      else if(!quote){ quote = ch; }
+    }
+
+    if(ch === ";" && !quote){
+      if(current.trim()) out.push(current.trim());
+      current = "";
+      continue;
+    }
+
+    current += ch;
+  }
+
+  if(current.trim()) out.push(current.trim());
+
+  return out;
+}
+
+
+/* =========================================================
+   SUBQUERY RESOLUTION
+   Runs each "IN (SELECT ...)" and replaces it with its values.
+========================================================= */
+
+function resolveSubqueries(sql){
+
+  const pattern = /\bIN\s*\(\s*SELECT\b/i;
+  let guard = 0;
+
+  while(guard++ < 20){
+
+    const match = pattern.exec(sql);
+    if(!match) break;
+
+    const open = sql.indexOf("(",match.index);
+    let depth = 0, quote = null, close = -1;
+
+    for(let i = open; i < sql.length; i++){
+      const c = sql[i];
+      if(c === "'" || c === '"'){
+        if(quote === c) quote = null;
+        else if(!quote) quote = c;
+        continue;
+      }
+      if(quote) continue;
+      if(c === "(") depth++;
+      else if(c === ")"){
+        depth--;
+        if(depth === 0){ close = i; break; }
+      }
+    }
+
+    if(close < 0){
+      throw new Error("Unbalanced parentheses in subquery.");
+    }
+
+    const inner = sql.slice(open + 1,close).trim();
+    const result = executeQuery(inner);
+    const rows = result.allRows;
+
+    if(rows.length && Object.keys(rows[0]).length !== 1){
+      throw new Error("A subquery used with IN must return exactly one column.");
+    }
+
+    const values = [...new Set(rows.map(r => Object.values(r)[0]))]
+      .filter(v => v !== null && v !== undefined)
+      .map(v => typeof v === "number"
+        ? String(v)
+        : `'${String(v).replace(/'/g,"")}'`);
+
+    const list = values.length ? values.join(", ") : "NULL";
+
+    sql = sql.slice(0,open) + "(" + list + ")" + sql.slice(close + 1);
+  }
+
+  return sql;
+}
+
+
+/* =========================================================
    EXECUTE QUERY
 ========================================================= */
 
@@ -1351,13 +1404,18 @@ function executeQuery(sql){
 
   const start = performance.now();
 
+  /* Keep the readable WHERE for reports, then run subqueries. */
+  const originalWhere = extractWhere(sql);
+  sql = resolveSubqueries(sql);
+
   const tableInfo = parseTable(sql);
 
   if(!DB[tableInfo.table]){
-    throw new Error(`Unknown table: ${tableInfo.table}`);
+    throw new Error(
+      `Unknown table: ${tableInfo.table}. Available tables: customers, products, orders.`
+    );
   }
 
-  /* Seed rows with both plain and alias-qualified keys. */
   const baseRows = DB[tableInfo.table].map(row=>{
     const copy = { ...row };
     for(const [key,value] of Object.entries(row)){
@@ -1369,8 +1427,6 @@ function executeQuery(sql){
   let rows = baseRows;
 
   const declaredJoins = (sql.match(/\bJOIN\b/gi) || []).length;
-
-  /* JOIN */
 
   let joinCount = 0;
 
@@ -1386,8 +1442,6 @@ function executeQuery(sql){
     }
   }
 
-  /* WHERE */
-
   const where = extractWhere(sql);
 
   if(where){
@@ -1397,8 +1451,6 @@ function executeQuery(sql){
 
   const selectPart = extractSelectPart(sql);
 
-  /* GROUP BY */
-
   const groupMatch = sql.match(
     /\bGROUP\s+BY\b(.+?)(?=\bHAVING\b|\bORDER\s+BY\b|\bLIMIT\b|$)/i
   );
@@ -1406,15 +1458,6 @@ function executeQuery(sql){
   if(groupMatch){
     rows = groupRows(rows,groupMatch[1].trim());
   }
-
-  /* HAVING — evaluated against each group before projection.
-
-     Aggregate calls are substituted with placeholder identifiers
-     (__agg0, __agg1, ...) because the predicate matcher only
-     accepts [\w.]+ on the left-hand side, and "COUNT(*)" contains
-     parentheses that the pattern cannot match. The placeholders
-     are plain identifiers, so they parse cleanly and resolve
-     through the evaluation context. */
 
   const having = extractHaving(sql);
 
@@ -1427,7 +1470,6 @@ function executeQuery(sql){
     const AGGREGATE_CALL =
       /\b(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(?:DISTINCT\s+)?[\w.*]+\s*\)/gi;
 
-    /* Collect every aggregate call in the HAVING text, in order. */
     const aggregateCalls = having.match(AGGREGATE_CALL) || [];
 
     if(!aggregateCalls.length && !/[\w.]+\s*(=|!=|<>|>=|<=|>|<)/.test(having)){
@@ -1436,7 +1478,6 @@ function executeQuery(sql){
       );
     }
 
-    /* Rewrite the HAVING text, replacing each call with a placeholder. */
     let counter = 0;
 
     const rewritten = having.replace(
@@ -1444,15 +1485,12 @@ function executeQuery(sql){
       () => `__agg${counter++}`
     );
 
-    /* Parse once, then evaluate per group. */
     const tree = parseCondition(rewritten);
 
     rows = rows.filter(groupRow=>{
 
       const groupRowSet = groupRow.__groupRows || [groupRow];
 
-      /* Context holds the group's columns plus one entry
-         per aggregate placeholder. */
       const context = { ...groupRow };
 
       aggregateCalls.forEach((expression,i)=>{
@@ -1463,13 +1501,9 @@ function executeQuery(sql){
     });
   }
 
-  /* SELECT */
-
   let result = executeSelect(rows,selectPart,{
     grouped:Boolean(groupMatch)
   });
-
-  /* DISTINCT */
 
   const hasDistinct = /^SELECT\s+DISTINCT\b/i.test(sql);
 
@@ -1483,15 +1517,11 @@ function executeQuery(sql){
     });
   }
 
-  /* ORDER BY */
-
   const orderMatch = sql.match(/\bORDER\s+BY\b(.+?)(?=\bLIMIT\b|$)/i);
 
   if(orderMatch){
     result = applyOrder(result,orderMatch[1].trim());
   }
-
-  /* LIMIT */
 
   const limit = extractLimit(sql);
 
@@ -1503,12 +1533,13 @@ function executeQuery(sql){
 
   return {
     rows:result.slice(0,100),
+    allRows:result,
     totalRows:result.length,
     elapsed,
     sourceRows:baseRows.length,
     table:tableInfo.table,
     alias:tableInfo.alias,
-    where,
+    where:originalWhere || where,
     having,
     joinCount,
     hasGroupBy:Boolean(groupMatch),
@@ -1522,10 +1553,7 @@ function executeQuery(sql){
 
 
 /* =========================================================
-   LEGACY PLAN ANALYSIS
-
-   Superseded by analyzePlanV2 in cost-model.js. Retained so
-   the two models can be compared during the demonstration.
+   LEGACY PLAN ANALYSIS (fallback if cost-model.js missing)
 ========================================================= */
 
 function analyzePlan(sql,execution){
@@ -1677,6 +1705,13 @@ function generateRecommendations(sql,execution,plan){
     });
   }
 
+  if(/\bIN\s*\(\s*SELECT\b/i.test(sql)){
+    recommendations.push({
+      title:"Subquery with IN",
+      text:"The subquery is evaluated first and its values are matched against the outer table. Rewriting it as a JOIN (or EXISTS) often lets the optimizer use indexes on both sides."
+    });
+  }
+
   if(/\bLIKE\s+['"]%/i.test(sql)){
     recommendations.push({
       title:"Leading Wildcard",
@@ -1708,9 +1743,12 @@ let currentAnalysis = null;
 
 function renderAnalysis(execution,plan,recommendations,query){
 
+  /* Do not store the full result array in history/report. */
+  const { allRows, ...executionLite } = execution;
+
   currentAnalysis = {
     query,
-    execution,
+    execution:executionLite,
     plan,
     recommendations,
     timestamp:new Date().toISOString()
@@ -1747,7 +1785,6 @@ function renderAnalysis(execution,plan,recommendations,query){
   $("temporaryStructures").textContent = plan.temporaryStructures;
   $("joinCount").textContent = plan.joins;
 
-  /* Cardinality metrics from the new cost model. */
   if($("estimatedRows")){
 
     $("estimatedRows").textContent =
@@ -1802,8 +1839,6 @@ function renderExecutionPlan(plan){
 
 function renderVisualization(plan){
 
-  /* Prefer per-operator cost shares when the new model supplies
-     them, since that shows where the time actually goes. */
   if(Array.isArray(plan.nodes) && plan.nodes.length){
 
     const max = Math.max(1,...plan.nodes.map(node => node.cost));
@@ -1964,12 +1999,11 @@ function renderResult(rows){
 
 
 /* =========================================================
-   DEMO SQL QUERIES (Diverse Query Optimization Scenarios)
+   DEMO SQL QUERIES
 ========================================================= */
 
 const DEMO_QUERIES = [
   {
-    id: "group_by_join",
     name: "Group By & Join (Orders by Country)",
     sql: `SELECT
     c.country,
@@ -1983,18 +2017,15 @@ ORDER BY total_orders DESC
 LIMIT 10;`
   },
   {
-    id: "indexed_point",
     name: "Indexed Filter (customers.country = 'India')",
     sql: `SELECT * FROM customers WHERE country = 'India' LIMIT 20;`
   },
   {
-    id: "unindexed_scan",
     name: "Full Table Scan (customers.city = 'Mumbai')",
     sql: `SELECT * FROM customers WHERE city = 'Mumbai';`
   },
   {
-    id: "multi_join",
-    name: "3-Table E-Commerce Join (customers + orders + products)",
+    name: "3-Table Join (customers + orders + products)",
     sql: `SELECT
     c.name AS customer_name,
     c.email,
@@ -2009,7 +2040,6 @@ WHERE o.status = 'Delivered'
 LIMIT 25;`
   },
   {
-    id: "product_agg",
     name: "Category Aggregates (AVG price & total products)",
     sql: `SELECT
     category,
@@ -2020,7 +2050,6 @@ GROUP BY category
 ORDER BY avg_price DESC;`
   },
   {
-    id: "subquery_in",
     name: "Subquery with IN (Customers with orders > 500)",
     sql: `SELECT * FROM customers
 WHERE id IN (
@@ -2029,15 +2058,13 @@ WHERE id IN (
 LIMIT 15;`
   },
   {
-    id: "expensive_sort",
-    name: "Expensive Unindexed Sort (orders.amount DESC)",
+    name: "Expensive Sort (orders.amount DESC)",
     sql: `SELECT * FROM orders
 WHERE status = 'Processing'
 ORDER BY amount DESC
 LIMIT 50;`
   },
   {
-    id: "date_range",
     name: "Order Status Lookup (orders.status = 'Shipped')",
     sql: `SELECT id, customer_id, product_id, amount, status
 FROM orders
@@ -2048,44 +2075,54 @@ LIMIT 30;`
 
 let currentDemoIndex = 0;
 
-function initDemoQueries(){
-  const select = $("demoQuerySelect");
-  if(select){
-    select.innerHTML = `<option value="" disabled selected>⚡ Demo Queries ▾</option>` +
-      DEMO_QUERIES.map((dq, idx) => `<option value="${idx}">${idx + 1}. ${escapeHTML(dq.name)}</option>`).join("");
 
-    select.addEventListener("change", function(){
-      const idx = parseInt(select.value, 10);
-      if(!isNaN(idx) && DEMO_QUERIES[idx]){
-        currentDemoIndex = idx;
-        if($("sqlInput")){
-          $("sqlInput").value = DEMO_QUERIES[idx].sql;
-          clearError();
-          analyzeQuery();
-        }
-      }
+function loadQueryIntoEditor(sql){
+  if(!$("sqlInput")) return false;
+  $("sqlInput").value = sql;
+  clearError();
+  return analyzeQuery();
+}
+
+
+function initDemoQueries(){
+
+  const select = $("demoQuerySelect");
+
+  if(select){
+
+    select.innerHTML =
+      `<option value="" disabled selected>⚡ Demo Queries ▾</option>` +
+      DEMO_QUERIES.map((dq,idx) =>
+        `<option value="${idx}">${idx + 1}. ${escapeHTML(dq.name)}</option>`
+      ).join("");
+
+    select.addEventListener("change",()=>{
+      const idx = parseInt(select.value,10);
+      if(Number.isNaN(idx) || !DEMO_QUERIES[idx]) return;
+
+      currentDemoIndex = idx + 1;
+      hideFileBadge();
+      loadQueryIntoEditor(DEMO_QUERIES[idx].sql);
     });
   }
 
   if($("exampleBtn")){
-    $("exampleBtn").addEventListener("click", () => {
-      const dq = DEMO_QUERIES[currentDemoIndex % DEMO_QUERIES.length];
-      currentDemoIndex++;
-      if($("sqlInput")){
-        $("sqlInput").value = dq.sql;
-        clearError();
-        $("sqlInput").focus();
-        analyzeQuery();
-      }
-      if($("demoQuerySelect")){
-        $("demoQuerySelect").value = String((currentDemoIndex - 1) % DEMO_QUERIES.length);
-      }
+    $("exampleBtn").addEventListener("click",()=>{
+
+      const idx = currentDemoIndex % DEMO_QUERIES.length;
+      currentDemoIndex = idx + 1;
+
+      if(select) select.value = String(idx);
+
+      hideFileBadge();
+      loadQueryIntoEditor(DEMO_QUERIES[idx].sql);
     });
   }
 }
 
+
 /* =========================================================
-   SQL FILE UPLOAD & COST ESTIMATION
+   SQL FILE UPLOAD
 ========================================================= */
 
 function formatFileSize(bytes){
@@ -2094,98 +2131,151 @@ function formatFileSize(bytes){
   return (bytes / 1048576).toFixed(1) + " MB";
 }
 
+
+function hideFileBadge(){
+  if($("fileUploadInfo")) $("fileUploadInfo").classList.add("hidden");
+  if($("sqlFileInput")) $("sqlFileInput").value = "";
+}
+
+
+function showFileBadge(html){
+  const badge = $("fileUploadInfo");
+  if(!badge || !$("fileInfoText")) return;
+  $("fileInfoText").innerHTML = html;
+  badge.classList.remove("hidden");
+}
+
+
+function runUploadedQuery(file,queries,index,skipped){
+
+  const ok = loadQueryIntoEditor(queries[index] + ";");
+
+  const picker = queries.length > 1
+    ? ` <select id="uploadedQuerySelect" class="demo-select" style="margin-left:6px">
+          ${queries.map((q,i)=>`
+            <option value="${i}" ${i === index ? "selected" : ""}>
+              Query ${i + 1}: ${escapeHTML(q.replace(/\s+/g," ").slice(0,40))}…
+            </option>`).join("")}
+        </select>`
+    : "";
+
+  const status = ok && currentAnalysis
+    ? `Cost Score: <strong>${currentAnalysis.plan.score}/100</strong> (${escapeHTML(currentAnalysis.plan.category)})`
+    : `<span style="color:var(--danger,#e5484d)">Could not analyze this query — see error below.</span>`;
+
+  const skippedNote = skipped > 0
+    ? ` <em style="opacity:.7">(${skipped} non-SELECT statement${skipped > 1 ? "s" : ""} skipped)</em>`
+    : "";
+
+  showFileBadge(
+    `✓ <strong>${escapeHTML(file.name)}</strong> (${formatFileSize(file.size)})
+     — ${queries.length} SELECT quer${queries.length === 1 ? "y" : "ies"} found — ${status}${skippedNote}${picker}`
+  );
+
+  const pickerEl = $("uploadedQuerySelect");
+  if(pickerEl){
+    pickerEl.addEventListener("change",()=>{
+      runUploadedQuery(file,queries,Number(pickerEl.value),skipped);
+    });
+  }
+}
+
+
 function handleUploadedSQLFile(file){
+
   if(!file) return;
 
-  const validExts = [".sql", ".txt"];
-  const isSql = validExts.some(ext => file.name.toLowerCase().endsWith(ext));
-  if(!isSql && file.type && !file.type.includes("text")){
-    showError("Please upload a .sql or .txt file containing a SQL query.");
+  const name = file.name.toLowerCase();
+
+  if(!name.endsWith(".sql") && !name.endsWith(".txt")){
+    showError("Please upload a .sql or .txt file.");
+    return;
+  }
+
+  if(file.size > 2 * 1048576){
+    showError("File is too large (max 2 MB).");
     return;
   }
 
   const reader = new FileReader();
-  reader.onload = function(e){
-    const text = e.target.result;
-    if(!text || !text.trim()){
+
+  reader.onload = event=>{
+
+    const text = String(event.target.result || "");
+
+    if(!text.trim()){
       showError("The uploaded file is empty.");
       return;
     }
 
-    if($("sqlInput")){
-      $("sqlInput").value = text;
+    const statements = splitSQLStatements(text);
+    const selects = statements.filter(s => /^SELECT\b/i.test(s));
+    const skipped = statements.length - selects.length;
+
+    if(!selects.length){
+      if($("sqlInput")) $("sqlInput").value = text;
+      showFileBadge(`<strong>${escapeHTML(file.name)}</strong> — no SELECT query found.`);
+      showError(
+        "No SELECT query found in the file. QueryLens only analyzes SELECT queries " +
+        "against the demo tables: customers, products, orders."
+      );
+      return;
     }
 
-    // Show upload badge
-    const badge = $("fileUploadInfo");
-    if(badge && $("fileInfoText")){
-      $("fileInfoText").innerHTML = `Loaded <strong>${escapeHTML(file.name)}</strong> (${formatFileSize(file.size)}) — Estimating cost...`;
-      badge.classList.remove("hidden");
-    }
-
-    clearError();
-
-    // Automatically analyze query and estimate cost!
-    analyzeQuery();
-
-    if(currentAnalysis && $("fileInfoText")){
-      $("fileInfoText").innerHTML = `✓ <strong>${escapeHTML(file.name)}</strong> (${formatFileSize(file.size)}) — Cost Score: <strong>${currentAnalysis.plan ? currentAnalysis.plan.score : ''}/100</strong> (${currentAnalysis.plan ? currentAnalysis.plan.category : ''})`;
-    }
+    runUploadedQuery(file,selects,0,skipped);
   };
 
-  reader.onerror = function(){
-    showError("Failed to read the uploaded file.");
-  };
+  reader.onerror = ()=> showError("Failed to read the uploaded file.");
 
   reader.readAsText(file);
 }
 
+
 function initFileUpload(){
+
   const fileInput = $("sqlFileInput");
+
   if(fileInput){
-    fileInput.addEventListener("change", function(e){
-      if(e.target.files && e.target.files[0]){
-        handleUploadedSQLFile(e.target.files[0]);
-      }
+    fileInput.addEventListener("change",event=>{
+      const file = event.target.files && event.target.files[0];
+      if(file) handleUploadedSQLFile(file);
+      /* Reset so selecting the same file again still fires. */
+      event.target.value = "";
     });
   }
 
-  const removeBtn = $("removeFileBtn");
-  if(removeBtn){
-    removeBtn.addEventListener("click", function(){
-      if($("fileUploadInfo")) $("fileUploadInfo").classList.add("hidden");
-      if($("sqlFileInput")) $("sqlFileInput").value = "";
+  if($("removeFileBtn")){
+    $("removeFileBtn").addEventListener("click",()=>{
+      hideFileBadge();
       if($("sqlInput")) $("sqlInput").value = "";
       clearError();
     });
   }
 
   const dropZone = $("sqlInput");
+
   if(dropZone){
-    ["dragenter", "dragover"].forEach(name => {
-      dropZone.addEventListener(name, function(e){
-        e.preventDefault();
-        e.stopPropagation();
+
+    ["dragenter","dragover"].forEach(type=>{
+      dropZone.addEventListener(type,event=>{
+        event.preventDefault();
         dropZone.classList.add("drag-over");
       });
     });
 
-    ["dragleave", "drop"].forEach(name => {
-      dropZone.addEventListener(name, function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.remove("drag-over");
-      });
+    dropZone.addEventListener("dragleave",()=>{
+      dropZone.classList.remove("drag-over");
     });
 
-    dropZone.addEventListener("drop", function(e){
-      const dt = e.dataTransfer;
-      if(dt && dt.files && dt.files.length > 0){
-        handleUploadedSQLFile(dt.files[0]);
-      }
+    dropZone.addEventListener("drop",event=>{
+      event.preventDefault();
+      dropZone.classList.remove("drag-over");
+      const files = event.dataTransfer && event.dataTransfer.files;
+      if(files && files.length) handleUploadedSQLFile(files[0]);
     });
   }
 }
+
 
 /* =========================================================
    ANALYZE
@@ -2200,18 +2290,15 @@ function analyzeQuery(){
 
   clearError();
 
-  if(!$("sqlInput")) return;
+  if(!$("sqlInput")) return false;
 
   const original = $("sqlInput").value.trim();
 
   try{
 
     const sql = validateSQL(original);
-
     const execution = executeQuery(sql);
 
-    /* analyzePlanV2 comes from cost-model.js. Fall back to the
-       legacy model if that file failed to load. */
     const plan = typeof analyzePlanV2 === "function"
       ? analyzePlanV2(sql,execution)
       : analyzePlan(sql,execution);
@@ -2220,9 +2307,13 @@ function analyzeQuery(){
 
     renderAnalysis(execution,plan,recommendations,sql);
 
+    return true;
+
   }catch(error){
 
+    console.error(error);
     showError(error.message || "Unable to analyze query.");
+    return false;
   }
 }
 
@@ -2240,8 +2331,8 @@ if($("clearBtn")){
 
     currentAnalysis = null;
 
-    if($("fileUploadInfo")) $("fileUploadInfo").classList.add("hidden");
-    if($("sqlFileInput")) $("sqlFileInput").value = "";
+    hideFileBadge();
+    if($("demoQuerySelect")) $("demoQuerySelect").selectedIndex = 0;
     if($("analysisContent")) $("analysisContent").classList.add("hidden");
     if($("emptyAnalysis")) $("emptyAnalysis").classList.remove("hidden");
   });
@@ -2253,12 +2344,14 @@ if($("clearBtn")){
 ========================================================= */
 
 function showError(message){
+  if(!$("errorMessage")){ alert(message); return; }
   $("errorMessage").textContent = message;
   $("errorMessage").classList.remove("hidden");
 }
 
 
 function clearError(){
+  if(!$("errorMessage")) return;
   $("errorMessage").textContent = "";
   $("errorMessage").classList.add("hidden");
 }
@@ -2292,10 +2385,14 @@ function saveHistory(analysis){
     timestamp:analysis.timestamp
   });
 
-  localStorage.setItem(
-    "querylens-history",
-    JSON.stringify(history.slice(0,10))
-  );
+  try{
+    localStorage.setItem(
+      "querylens-history",
+      JSON.stringify(history.slice(0,10))
+    );
+  }catch(e){
+    console.warn("Could not save history",e);
+  }
 }
 
 
@@ -2345,8 +2442,8 @@ function renderHistory(){
 
       analyzeQuery();
 
-      document.getElementById("analyser")
-        .scrollIntoView({ behavior:"smooth" });
+      const target = document.getElementById("analyser");
+      if(target) target.scrollIntoView({ behavior:"smooth" });
     });
   });
 }
@@ -2362,9 +2459,6 @@ if($("clearHistoryBtn")){
 
 /* =========================================================
    TESTING
-
-   Each case asserts a concrete expected outcome rather than
-   merely checking that nothing threw.
 ========================================================= */
 
 if($("runTestsBtn")){
@@ -2428,9 +2522,17 @@ function runTests(){
       name:"IN list filter",
       query:"SELECT id, status FROM orders WHERE status IN ('Delivered', 'Shipped') LIMIT 20;",
       check:(execution)=>
+        execution.totalRows === 20 &&
         execution.rows.every(r =>
           r.status === "Delivered" || r.status === "Shipped"
         )
+    },
+
+    {
+      name:"IN subquery returns rows",
+      query:"SELECT * FROM customers WHERE id IN (SELECT customer_id FROM orders WHERE amount > 500) LIMIT 15;",
+      check:(execution)=>
+        execution.totalRows === 15
     },
 
     {
@@ -2474,6 +2576,32 @@ function runTests(){
       check:(execution)=>
         execution.totalRows === 4 &&
         execution.rows.every(r => r.n > 0 && r.total > 0)
+    },
+
+    {
+      name:"Multi-statement file is split correctly",
+      query:"SELECT id FROM customers LIMIT 1;",
+      check:()=>{
+        const parts = splitSQLStatements(
+          "-- c\nCREATE TABLE x(id INT);\nSELECT 1 FROM customers;\nSELECT 'a;b' FROM orders;"
+        );
+        return parts.length === 3 &&
+               parts.filter(s => /^SELECT\b/i.test(s)).length === 2;
+      }
+    },
+
+    {
+      name:"Every demo query runs",
+      query:"SELECT id FROM customers LIMIT 1;",
+      check:()=>DEMO_QUERIES.every(dq=>{
+        try{
+          executeQuery(validateSQL(dq.sql));
+          return true;
+        }catch(e){
+          console.error("Demo failed:",dq.name,e);
+          return false;
+        }
+      })
     },
 
     {
@@ -2677,7 +2805,7 @@ function downloadFile(filename,content,type){
   link.click();
   link.remove();
 
-  URL.revokeObjectURL(url);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
 
@@ -2840,7 +2968,6 @@ function init(){
 
   checkUrlParameters();
 
-  /* startQuizModule comes from quiz.js and is idempotent. */
   if(typeof startQuizModule === "function"){
     startQuizModule();
   }

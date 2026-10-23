@@ -5,6 +5,223 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Help &amp; Documentation | QueryLens</title>
 <link rel="stylesheet" href="style.css">
+
+<style>
+/* ---------- Help page extras (scoped to this page) ---------- */
+
+html{ scroll-behavior:smooth; }
+
+.help-block{
+  width:min(1200px,100%);
+  margin:48px auto 0;
+}
+
+.help-block > h2{
+  font-size:1.5rem;
+  margin:6px 0 8px;
+}
+
+.help-block > p.lead{
+  color:var(--muted);
+  margin-bottom:20px;
+  line-height:1.6;
+}
+
+.help-toc{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:22px;
+}
+
+.help-toc a{
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  font-size:.8rem;
+  text-decoration:none;
+  color:inherit;
+  transition:background .2s,border-color .2s;
+}
+
+.help-toc a:hover{
+  border-color:var(--primary);
+  background:rgba(85,92,240,.08);
+}
+
+.help-search{
+  width:100%;
+  margin-top:20px;
+  padding:12px 16px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--surface,transparent);
+  color:inherit;
+  font-size:.95rem;
+}
+
+.help-search:focus{
+  outline:none;
+  border-color:var(--primary);
+}
+
+.help-no-results{
+  margin-top:12px;
+  color:var(--muted);
+  font-size:.9rem;
+}
+
+.help-card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+}
+
+.help-card{
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:20px;
+  background:var(--surface,transparent);
+}
+
+.help-card h3{
+  font-size:1.05rem;
+  margin-bottom:8px;
+}
+
+.help-card p,
+.help-card li{
+  color:var(--muted);
+  font-size:.88rem;
+  line-height:1.6;
+}
+
+.help-card ul{
+  padding-left:18px;
+  margin:0;
+}
+
+.help-table-wrap{
+  overflow-x:auto;
+  border:1px solid var(--border);
+  border-radius:14px;
+}
+
+.help-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:.86rem;
+}
+
+.help-table th,
+.help-table td{
+  padding:10px 14px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+  vertical-align:top;
+}
+
+.help-table th{
+  font-size:.75rem;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.help-table tr:last-child td{ border-bottom:none; }
+
+.help-table code,
+.help-card code,
+.faq-grid code{
+  font-family:Consolas,monospace;
+  font-size:.82rem;
+  padding:1px 6px;
+  border-radius:6px;
+  background:rgba(127,127,127,.15);
+}
+
+.yes{ color:#22a06b; font-weight:700; }
+.no { color:#e5484d; font-weight:700; }
+.partial{ color:#d29922; font-weight:700; }
+
+.example-card pre{
+  white-space:pre-wrap;
+  font-family:Consolas,monospace;
+  font-size:.8rem;
+  line-height:1.5;
+  padding:12px;
+  border-radius:10px;
+  background:rgba(127,127,127,.12);
+  margin:10px 0 12px;
+}
+
+.example-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.score-band{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.score-pill{
+  min-width:86px;
+  text-align:center;
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:.82rem;
+  color:#fff;
+}
+
+.pill-low{ background:#22a06b; }
+.pill-mod{ background:#d29922; }
+.pill-high{ background:#e5484d; }
+
+kbd{
+  font-family:Consolas,monospace;
+  font-size:.78rem;
+  padding:2px 7px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  border-bottom-width:2px;
+}
+
+.back-to-top{
+  position:fixed;
+  right:22px;
+  bottom:22px;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:none;
+  cursor:pointer;
+  font-size:1.1rem;
+  color:#fff;
+  background:var(--primary,#555cf0);
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s;
+  z-index:50;
+}
+
+.back-to-top.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.hidden-by-search{ display:none !important; }
+
+@media print{
+  .help-search,.help-toc,.back-to-top,.example-actions{ display:none !important; }
+  details{ display:block; }
+  details > p{ display:block; }
+}
+</style>
 </head>
 
 <body>
@@ -50,220 +267,811 @@
   </div>
 </header>
 
-<main>
+<main id="top">
 
 <section class="section">
+
+  <!-- ================= INTRO ================= -->
 
   <div class="page-intro-card">
     <span class="eyebrow">HELP &amp; DOCUMENTATION</span>
     <h1>How to Use QueryLens</h1>
-    <p>Follow these steps to analyze SQL queries, upload SQL files, interpret cost estimation, and practice competitive exam questions.</p>
-    <div style="display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap;">
-      <a href="index.html" class="primary-button small">⚡ Open Query Analyser</a>
+    <p>
+      Everything you need to analyze SQL queries, upload SQL files, read the
+      cost estimate, fix errors and practise for exams.
+    </p>
+
+    <div style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap;">
+      <a href="index.html#analyser" class="primary-button small">⚡ Open Query Analyser</a>
       <a href="exam.html" class="secondary-button small">50 GATE DBMS PYQs →</a>
       <a href="#faq" class="ghost-button small">Browse FAQs ↓</a>
     </div>
-  </div>
 
-  <div class="help-grid">
+    <input
+      type="search"
+      id="helpSearch"
+      class="help-search"
+      placeholder="🔍 Search help — e.g. upload, index, error, selectivity, join…"
+      aria-label="Search help"
+    />
+    <div id="helpNoResults" class="help-no-results hidden">
+      No help topics match your search. Try a different word.
+    </div>
 
-    <article class="help-step">
-      <span>01</span>
-      <h3>Enter or Upload SQL</h3>
-      <p>
-        Type a SELECT query into the editor, pick from our ready-made <strong>Demo Queries</strong> dropdown, or click <strong>📂 Upload .sql</strong> to upload your own SQL file directly.
-      </p>
-    </article>
-
-    <article class="help-step">
-      <span>02</span>
-      <h3>Analyze Query &amp; Cost</h3>
-      <p>
-        Click Analyze Query, or press Ctrl and Enter together. QueryLens
-        parses the SQL and runs it against its in-browser dataset, instantly calculating computational cost.
-      </p>
-    </article>
-
-    <article class="help-step">
-      <span>03</span>
-      <h3>Check the Score</h3>
-      <p>
-        The score runs from 1 to 100, where higher is cheaper. Read it
-        alongside the estimated cost, execution time and rows returned.
-      </p>
-    </article>
-
-    <article class="help-step">
-      <span>04</span>
-      <h3>Read the Cardinality</h3>
-      <p>
-        Selectivity is the fraction of rows your filter keeps. Estimated
-        Rows is how many survive. Index Used names the index column, or
-        reads "none" when a full scan is required.
-      </p>
-    </article>
-
-    <article class="help-step">
-      <span>05</span>
-      <h3>Study the Execution Plan</h3>
-      <p>
-        Each line shows one operator with its estimated rows, its cost and
-        its share of the total. The cost chart ranks the same operators so
-        you can see where the work concentrates.
-      </p>
-    </article>
-
-    <article class="help-step">
-      <span>06</span>
-      <h3>Apply the Advice</h3>
-      <p>
-        The Optimization Advisor explains what it found. Suggested Rewrites
-        gives copy-ready SQL and CREATE INDEX statements to run against
-        your own database.
-      </p>
-    </article>
-
-    <article class="help-step">
-      <span>07</span>
-      <h3>Verify with Tests</h3>
-      <p>
-        Click Run Tests to execute built-in cases covering filters, joins,
-        aggregates, operator precedence and invalid input. Each case
-        asserts a specific expected outcome.
-      </p>
-    </article>
-
-    <article class="help-step">
-      <span>08</span>
-      <h3>Download a Report</h3>
-      <p>
-        Use the Download menu for Text, Document, JSON or printable PDF.
-        The report records your input, the plan, the cost breakdown, the
-        recommendations and sample output rows.
-      </p>
-    </article>
-
-    <article class="help-step">
-      <span>09</span>
-      <h3>Take the Quiz</h3>
-      <p>
-        Navigate to Quiz, choose how many questions you
-        want and pick Easy, Medium or Hard. Answer one question at a time;
-        each is marked immediately with an explanation.
-      </p>
-    </article>
-
-    <article class="help-step">
-      <span>10</span>
-      <h3>Practise 50 GATE PYQs</h3>
-      <p>
-        Open Competitive Exam, search or filter by sections A–G, then select an
-        option on any question. The correct answer and a step-by-step
-        solution appear once you have chosen.
-      </p>
-    </article>
-
-    <article class="help-step">
-      <span>11</span>
-      <h3>Switch Day or Night</h3>
-      <p>
-        Use the sun and moon button at the top right. Your choice is
-        remembered in this browser for next time.
-      </p>
-    </article>
-
-    <article class="help-step">
-      <span>12</span>
-      <h3>Reuse Past Queries</h3>
-      <p>
-        Analysis History lists your ten most recent queries. Click any
-        entry to load and re-run it.
-      </p>
-    </article>
-
+    <nav class="help-toc" aria-label="Help contents">
+      <a href="#quick-start">🚀 Quick Start</a>
+      <a href="#steps">📘 Step-by-Step Guide</a>
+      <a href="#upload">📂 Uploading Files</a>
+      <a href="#schema">🗄️ Database Reference</a>
+      <a href="#supported">✅ Supported SQL</a>
+      <a href="#examples">🧪 Example Queries</a>
+      <a href="#score">📊 Reading the Score</a>
+      <a href="#errors">⚠️ Error Messages</a>
+      <a href="#shortcuts">⌨️ Shortcuts</a>
+      <a href="#tips">💡 Optimization Tips</a>
+      <a href="#glossary">📖 Glossary</a>
+      <a href="#run-locally">💻 Run Locally</a>
+      <a href="#faq">❓ FAQ</a>
+    </nav>
   </div>
 
 
-  <div class="faq-section" id="faq">
+  <!-- ================= QUICK START ================= -->
+
+  <div class="help-block searchable-block" id="quick-start">
+    <span class="eyebrow">QUICK START</span>
+    <h2>Analyze your first query in 30 seconds</h2>
+    <p class="lead">New here? Follow these five steps.</p>
+
+    <div class="help-card-grid">
+      <div class="help-card searchable">
+        <h3>1. Open the analyser</h3>
+        <p>Go to the <strong>Analyze</strong> page and scroll to <em>Analyze your SQL query</em>.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>2. Pick a demo</h3>
+        <p>Choose any query from the <strong>⚡ Demo Queries</strong> dropdown. It loads and runs straight away.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>3. Read the score</h3>
+        <p>Look at the 1–100 score circle. Green (75+) is cheap, red (below 45) is expensive.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>4. Check the advice</h3>
+        <p>Scroll to <strong>Optimization Advisor</strong> and <strong>Suggested Rewrites</strong> to see how to improve the query.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>5. Try your own</h3>
+        <p>Edit the query, or upload a <code>.sql</code> file, and press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to compare.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= STEP-BY-STEP ================= -->
+
+  <div class="help-block searchable-block" id="steps">
+    <span class="eyebrow">STEP-BY-STEP GUIDE</span>
+    <h2>Every feature, explained</h2>
+    <p class="lead">A walkthrough of each part of QueryLens.</p>
+
+    <div class="help-grid">
+
+      <article class="help-step searchable">
+        <span>01</span>
+        <h3>Enter or Upload SQL</h3>
+        <p>
+          Type a SELECT query into the editor, pick one from the
+          <strong>Demo Queries</strong> dropdown, click <strong>Load Example</strong>
+          to cycle through demos, or click <strong>📂 Upload .sql</strong> to load your own file.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>02</span>
+        <h3>Analyze Query &amp; Cost</h3>
+        <p>
+          Click Analyze Query, or press <kbd>Ctrl</kbd> + <kbd>Enter</kbd>. QueryLens
+          parses the SQL, runs it against the in-browser dataset and calculates its estimated cost.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>03</span>
+        <h3>Check the Score</h3>
+        <p>
+          The score runs from 1 to 100, where higher is cheaper. Read it
+          alongside the estimated cost, execution time and rows returned.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>04</span>
+        <h3>Read the Cardinality</h3>
+        <p>
+          Selectivity is the fraction of rows your filter keeps. Estimated
+          Rows is how many survive. Index Used names the index column, or
+          shows "none" when a full scan is needed.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>05</span>
+        <h3>Study the Execution Plan</h3>
+        <p>
+          Each line shows one operator with its estimated rows, its cost and
+          its share of the total. The cost chart ranks the same operators so
+          you can see where the work goes.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>06</span>
+        <h3>Apply the Advice</h3>
+        <p>
+          The Optimization Advisor explains what it found. Suggested Rewrites
+          gives copy-ready SQL and CREATE INDEX statements to run on your own database.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>07</span>
+        <h3>View the Result Rows</h3>
+        <p>
+          The Query Result table shows up to 100 rows from your query.
+          Empty values appear as <em>NULL</em>.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>08</span>
+        <h3>Verify with Tests</h3>
+        <p>
+          Click Run Tests to run built-in cases covering filters, joins,
+          aggregates, subqueries, file splitting and invalid input. Each case
+          checks a specific expected result.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>09</span>
+        <h3>Download a Report</h3>
+        <p>
+          Use the Download menu for a Text, Document, JSON or printable PDF report.
+          It includes your query, the plan, the cost breakdown, the advice and sample rows.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>10</span>
+        <h3>Reuse Past Queries</h3>
+        <p>
+          Analysis History lists your ten most recent queries. Click any
+          entry to load and re-run it. Click Clear History to remove them.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>11</span>
+        <h3>Take the Quiz</h3>
+        <p>
+          Open Quiz, choose how many questions you want and pick Easy,
+          Medium or Hard. Each answer is marked straight away with an explanation.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>12</span>
+        <h3>Practise 50 GATE PYQs</h3>
+        <p>
+          Open Competitive Exam, search or filter by sections A–G, then select an
+          option. The correct answer and a full solution appear after you choose.
+          Use "Test SQL in Analyser" on SQL questions to run them.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>13</span>
+        <h3>Switch Day or Night</h3>
+        <p>
+          Use the sun and moon button at the top right. Your choice is
+          remembered in this browser.
+        </p>
+      </article>
+
+      <article class="help-step searchable">
+        <span>14</span>
+        <h3>Share a Query Link</h3>
+        <p>
+          Add <code>?sql=</code> followed by your query to the analyser address,
+          e.g. <code>index.html?sql=SELECT * FROM products</code>. The query loads and runs automatically.
+        </p>
+      </article>
+
+    </div>
+  </div>
+
+
+  <!-- ================= UPLOAD ================= -->
+
+  <div class="help-block searchable-block" id="upload">
+    <span class="eyebrow">UPLOADING SQL FILES</span>
+    <h2>How file upload works</h2>
+    <p class="lead">
+      Upload a <code>.sql</code> or <code>.txt</code> file with the
+      <strong>📂 Upload .sql</strong> button, or drag and drop it onto the editor.
+    </p>
+
+    <div class="help-card-grid">
+      <div class="help-card searchable">
+        <h3>📄 Several queries in one file</h3>
+        <p>
+          Separate queries with semicolons (<code>;</code>). QueryLens splits the file,
+          runs the first SELECT and shows a dropdown so you can pick any other one.
+        </p>
+      </div>
+      <div class="help-card searchable">
+        <h3>⏭️ Non-SELECT lines are skipped</h3>
+        <p>
+          Statements such as <code>CREATE TABLE</code>, <code>INSERT</code> or
+          <code>UPDATE</code> are skipped safely. The upload bar tells you how many were skipped.
+        </p>
+      </div>
+      <div class="help-card searchable">
+        <h3>💬 Comments are ignored</h3>
+        <p>
+          Both <code>-- line comments</code> and <code>/* block comments */</code>
+          are removed before the queries are analyzed.
+        </p>
+      </div>
+      <div class="help-card searchable">
+        <h3>📏 Limits</h3>
+        <ul>
+          <li>File types: <code>.sql</code> or <code>.txt</code></li>
+          <li>Maximum size: 2 MB</li>
+          <li>Queries must use the demo tables (see below)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="help-card example-card searchable" style="margin-top:16px;">
+      <h3>Example upload file</h3>
+      <pre>-- my_queries.sql
+CREATE TABLE ignored (id INT);   -- skipped
+
+SELECT category, COUNT(*) AS n
+FROM products
+GROUP BY category;
+
+SELECT * FROM orders
+WHERE status = 'Shipped'
+LIMIT 20;</pre>
+      <p>This file gives you <strong>2 SELECT queries</strong>, with 1 statement skipped.</p>
+    </div>
+  </div>
+
+
+  <!-- ================= SCHEMA ================= -->
+
+  <div class="help-block searchable-block" id="schema">
+    <span class="eyebrow">DATABASE REFERENCE</span>
+    <h2>Tables you can query</h2>
+    <p class="lead">
+      QueryLens creates this demo database in your browser each time the page loads.
+      Only these three tables exist.
+    </p>
+
+    <div class="help-card-grid">
+
+      <div class="help-card searchable">
+        <h3>👤 customers <small style="color:var(--muted)">— 3,000 rows</small></h3>
+        <ul>
+          <li><code>id</code> INTEGER</li>
+          <li><code>name</code> TEXT — e.g. "Customer 12"</li>
+          <li><code>email</code> TEXT</li>
+          <li><code>country</code> TEXT — 8 values (India, USA, UK, Canada, Australia, Germany, Singapore, UAE)</li>
+          <li><code>city</code> TEXT — 10 values (Chennai, Mumbai, Delhi, Bangalore, Hyderabad, Pune, New York, London, Toronto, Sydney)</li>
+          <li><code>created_at</code> DATE (2025-01-01 to 2026-08-31)</li>
+        </ul>
+        <p style="margin-top:8px;"><strong>Indexed:</strong> id, country, email</p>
+      </div>
+
+      <div class="help-card searchable">
+        <h3>📦 products <small style="color:var(--muted)">— 500 rows</small></h3>
+        <ul>
+          <li><code>id</code> INTEGER</li>
+          <li><code>name</code> TEXT — e.g. "Laptop 7"</li>
+          <li><code>category</code> TEXT — 6 values (Electronics, Books, Clothing, Home, Sports, Beauty)</li>
+          <li><code>price</code> REAL — 20 to 2,000</li>
+        </ul>
+        <p style="margin-top:8px;"><strong>Indexed:</strong> id, category</p>
+      </div>
+
+      <div class="help-card searchable">
+        <h3>🧾 orders <small style="color:var(--muted)">— 25,000 rows</small></h3>
+        <ul>
+          <li><code>id</code> INTEGER</li>
+          <li><code>customer_id</code> INTEGER → customers.id</li>
+          <li><code>product_id</code> INTEGER → products.id</li>
+          <li><code>order_date</code> DATE</li>
+          <li><code>quantity</code> INTEGER — 1 to 5</li>
+          <li><code>amount</code> REAL — price × quantity</li>
+          <li><code>status</code> TEXT — Delivered, Shipped, Processing, Cancelled</li>
+        </ul>
+        <p style="margin-top:8px;"><strong>Indexed:</strong> id, customer_id, product_id, order_date, status</p>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ================= SUPPORTED SQL ================= -->
+
+  <div class="help-block searchable-block" id="supported">
+    <span class="eyebrow">SUPPORTED SQL</span>
+    <h2>What QueryLens understands</h2>
+    <p class="lead">QueryLens runs a simplified SQL engine. Here is what it can and can't do.</p>
+
+    <div class="help-table-wrap">
+      <table class="help-table">
+        <thead>
+          <tr><th>Feature</th><th>Status</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+          <tr class="searchable"><td>SELECT columns / *</td><td class="yes">Supported</td><td><code>SELECT id, name FROM customers</code></td></tr>
+          <tr class="searchable"><td>Column aliases (AS)</td><td class="yes">Supported</td><td><code>SELECT name AS customer FROM customers</code></td></tr>
+          <tr class="searchable"><td>DISTINCT</td><td class="yes">Supported</td><td><code>SELECT DISTINCT country FROM customers</code></td></tr>
+          <tr class="searchable"><td>WHERE with =, !=, &lt;&gt;, &lt;, &gt;, &lt;=, &gt;=</td><td class="yes">Supported</td><td><code>WHERE amount &gt; 500</code></td></tr>
+          <tr class="searchable"><td>AND / OR / NOT / parentheses</td><td class="yes">Supported</td><td><code>WHERE country = 'India' AND (city = 'Pune' OR city = 'Delhi')</code></td></tr>
+          <tr class="searchable"><td>IN / NOT IN list</td><td class="yes">Supported</td><td><code>WHERE status IN ('Shipped', 'Delivered')</code></td></tr>
+          <tr class="searchable"><td>IN (subquery)</td><td class="yes">Supported</td><td><code>WHERE id IN (SELECT customer_id FROM orders)</code></td></tr>
+          <tr class="searchable"><td>BETWEEN</td><td class="yes">Supported</td><td><code>WHERE quantity BETWEEN 2 AND 4</code></td></tr>
+          <tr class="searchable"><td>LIKE / NOT LIKE (% and _)</td><td class="yes">Supported</td><td><code>WHERE email LIKE 'customer1%'</code></td></tr>
+          <tr class="searchable"><td>IS NULL / IS NOT NULL</td><td class="yes">Supported</td><td><code>WHERE city IS NOT NULL</code></td></tr>
+          <tr class="searchable"><td>JOIN / INNER JOIN / LEFT JOIN</td><td class="yes">Supported</td><td><code>JOIN orders o ON c.id = o.customer_id</code></td></tr>
+          <tr class="searchable"><td>Multiple joins</td><td class="yes">Supported</td><td>customers → orders → products</td></tr>
+          <tr class="searchable"><td>COUNT, SUM, AVG, MIN, MAX</td><td class="yes">Supported</td><td><code>SELECT AVG(price) FROM products</code></td></tr>
+          <tr class="searchable"><td>GROUP BY / HAVING</td><td class="yes">Supported</td><td><code>GROUP BY status HAVING COUNT(*) &gt; 100</code></td></tr>
+          <tr class="searchable"><td>ORDER BY (ASC / DESC) / LIMIT</td><td class="yes">Supported</td><td><code>ORDER BY amount DESC LIMIT 10</code></td></tr>
+          <tr class="searchable"><td>JOIN conditions</td><td class="partial">Partly</td><td>Only a single equality: <code>ON a.col = b.col</code></td></tr>
+          <tr class="searchable"><td>Functions in SELECT (UPPER, ROUND…)</td><td class="no">Not supported</td><td>Use plain columns or aggregates</td></tr>
+          <tr class="searchable"><td>Arithmetic (price * 2)</td><td class="no">Not supported</td><td>—</td></tr>
+          <tr class="searchable"><td>RIGHT / FULL / CROSS JOIN, UNION, WITH (CTE)</td><td class="no">Not supported</td><td>—</td></tr>
+          <tr class="searchable"><td>EXISTS, subqueries outside IN</td><td class="no">Not supported</td><td>Rewrite with IN or JOIN</td></tr>
+          <tr class="searchable"><td>INSERT / UPDATE / DELETE / CREATE / DROP</td><td class="no">Blocked</td><td>QueryLens is read-only</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ================= EXAMPLES ================= -->
+
+  <div class="help-block searchable-block" id="examples">
+    <span class="eyebrow">EXAMPLE QUERIES</span>
+    <h2>Try these in the analyser</h2>
+    <p class="lead">
+      Click <strong>▶ Try it</strong> to open a query in the analyser and run it,
+      or <strong>Copy</strong> to paste it yourself. Compare the scores to see how each change affects cost.
+    </p>
+
+    <div class="help-card-grid" id="exampleGrid">
+
+      <div class="help-card example-card searchable" data-sql="SELECT id, name FROM customers WHERE country = 'India';">
+        <h3>✅ Indexed lookup (cheap)</h3>
+        <p>Filters on an indexed column, so the engine can seek straight to matching rows.</p>
+        <pre></pre>
+        <div class="example-actions"></div>
+      </div>
+
+      <div class="help-card example-card searchable" data-sql="SELECT * FROM customers WHERE city = 'Mumbai';">
+        <h3>⚠️ Full table scan</h3>
+        <p><code>city</code> has no index, so every row is read. Compare its score with the one above.</p>
+        <pre></pre>
+        <div class="example-actions"></div>
+      </div>
+
+      <div class="help-card example-card searchable" data-sql="SELECT c.name, p.name AS product, o.amount FROM customers c JOIN orders o ON c.id = o.customer_id JOIN products p ON o.product_id = p.id WHERE o.status = 'Delivered' LIMIT 20;">
+        <h3>🔗 Three-table join</h3>
+        <p>Joins customers, orders and products using indexed foreign keys.</p>
+        <pre></pre>
+        <div class="example-actions"></div>
+      </div>
+
+      <div class="help-card example-card searchable" data-sql="SELECT status, COUNT(*) AS total, SUM(amount) AS revenue FROM orders GROUP BY status HAVING COUNT(*) > 1000 ORDER BY revenue DESC;">
+        <h3>📊 Aggregation with HAVING</h3>
+        <p>Groups 25,000 orders by status and filters the groups afterwards.</p>
+        <pre></pre>
+        <div class="example-actions"></div>
+      </div>
+
+      <div class="help-card example-card searchable" data-sql="SELECT * FROM customers WHERE id IN (SELECT customer_id FROM orders WHERE amount > 1500) LIMIT 15;">
+        <h3>🧩 Subquery with IN</h3>
+        <p>Finds customers who placed at least one large order.</p>
+        <pre></pre>
+        <div class="example-actions"></div>
+      </div>
+
+      <div class="help-card example-card searchable" data-sql="SELECT name, email FROM customers WHERE email LIKE '%9@example.com';">
+        <h3>🐢 Leading wildcard LIKE</h3>
+        <p>A pattern starting with <code>%</code> can't use an index. See the advice it triggers.</p>
+        <pre></pre>
+        <div class="example-actions"></div>
+      </div>
+
+      <div class="help-card example-card searchable" data-sql="SELECT id, order_date, amount FROM orders WHERE order_date BETWEEN '2026-01-01' AND '2026-03-31' ORDER BY amount DESC LIMIT 10;">
+        <h3>📅 Date range + sort</h3>
+        <p>Range filter on an indexed date column, then a top-10 sort.</p>
+        <pre></pre>
+        <div class="example-actions"></div>
+      </div>
+
+      <div class="help-card example-card searchable" data-sql="SELECT DISTINCT category FROM products;">
+        <h3>🧹 DISTINCT values</h3>
+        <p>Removes duplicates, which adds a temporary structure to the plan.</p>
+        <pre></pre>
+        <div class="example-actions"></div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ================= SCORE ================= -->
+
+  <div class="help-block searchable-block" id="score">
+    <span class="eyebrow">READING THE RESULTS</span>
+    <h2>What the score and metrics mean</h2>
+
+    <div class="help-card-grid">
+      <div class="help-card searchable">
+        <div class="score-band"><span class="score-pill pill-low">75 – 100</span><h3 style="margin:0">Low cost</h3></div>
+        <p style="margin-top:10px;">Close to the cheapest possible plan. Usually an index lookup with a small result.</p>
+      </div>
+      <div class="help-card searchable">
+        <div class="score-band"><span class="score-pill pill-mod">45 – 74</span><h3 style="margin:0">Moderate</h3></div>
+        <p style="margin-top:10px;">Some extra work, such as a sort, grouping or a scan of a medium-sized table.</p>
+      </div>
+      <div class="help-card searchable">
+        <div class="score-band"><span class="score-pill pill-high">1 – 44</span><h3 style="margin:0">High cost</h3></div>
+        <p style="margin-top:10px;">Expensive operations, such as full scans of large tables, unindexed joins or big sorts. Check the advice.</p>
+      </div>
+    </div>
+
+    <div class="help-table-wrap" style="margin-top:16px;">
+      <table class="help-table">
+        <thead><tr><th>Metric</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr class="searchable"><td><strong>Estimated Cost</strong></td><td>Abstract "cost units" based on pages read and rows processed (similar to PostgreSQL's planner). Lower is better.</td></tr>
+          <tr class="searchable"><td><strong>Execution Time</strong></td><td>How long the query actually took in your browser, in milliseconds. It varies from run to run.</td></tr>
+          <tr class="searchable"><td><strong>Rows Returned</strong></td><td>How many rows the query produced (the table shows up to 100).</td></tr>
+          <tr class="searchable"><td><strong>Full Scans</strong></td><td>How many times a whole table had to be read row by row.</td></tr>
+          <tr class="searchable"><td><strong>Index Searches</strong></td><td>How many times an index was used to jump straight to matching rows.</td></tr>
+          <tr class="searchable"><td><strong>Temporary Structures</strong></td><td>Extra work areas needed for GROUP BY, ORDER BY or DISTINCT.</td></tr>
+          <tr class="searchable"><td><strong>Estimated Rows</strong></td><td>How many rows the planner predicts will pass the WHERE filter.</td></tr>
+          <tr class="searchable"><td><strong>Selectivity</strong></td><td>The percentage of rows the filter keeps. A small percentage means a selective filter.</td></tr>
+          <tr class="searchable"><td><strong>Index Used</strong></td><td>The indexed column used for the lookup, or "none".</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ================= ERRORS ================= -->
+
+  <div class="help-block searchable-block" id="errors">
+    <span class="eyebrow">TROUBLESHOOTING</span>
+    <h2>Error messages and how to fix them</h2>
+
+    <div class="help-table-wrap">
+      <table class="help-table">
+        <thead><tr><th>Error message</th><th>Why it happens</th><th>How to fix it</th></tr></thead>
+        <tbody>
+          <tr class="searchable"><td>Please enter a SQL query.</td><td>The editor is empty.</td><td>Type a query or choose a demo.</td></tr>
+          <tr class="searchable"><td>Only SELECT queries are supported.</td><td>The query starts with something other than SELECT.</td><td>Use a SELECT query. For files, other statements are skipped automatically.</td></tr>
+          <tr class="searchable"><td>Data modification … not allowed.</td><td>The query contains INSERT, UPDATE, DELETE, DROP, etc.</td><td>Remove those keywords. QueryLens is read-only.</td></tr>
+          <tr class="searchable"><td>Multiple SQL statements are not supported.</td><td>More than one query is typed in the editor.</td><td>Analyze one at a time, or upload them as a .sql file.</td></tr>
+          <tr class="searchable"><td>The query must contain a FROM clause.</td><td>No table was given.</td><td>Add <code>FROM customers</code>, <code>products</code> or <code>orders</code>.</td></tr>
+          <tr class="searchable"><td>Unknown table: …</td><td>The table doesn't exist in the demo database.</td><td>Use only <code>customers</code>, <code>products</code> or <code>orders</code>.</td></tr>
+          <tr class="searchable"><td>Unbalanced parentheses.</td><td>A <code>(</code> or <code>)</code> is missing.</td><td>Count your brackets and make sure each one is closed.</td></tr>
+          <tr class="searchable"><td>Unterminated string literal.</td><td>A quote <code>'</code> was opened but not closed.</td><td>Close the text value, e.g. <code>'India'</code>.</td></tr>
+          <tr class="searchable"><td>Unsupported condition in WHERE clause.</td><td>An operator or function QueryLens doesn't know was used.</td><td>Use =, &lt;, &gt;, LIKE, IN, BETWEEN or IS NULL.</td></tr>
+          <tr class="searchable"><td>Each JOIN needs an ON condition…</td><td>A JOIN is missing <code>ON a = b</code>.</td><td>Add e.g. <code>ON c.id = o.customer_id</code>.</td></tr>
+          <tr class="searchable"><td>HAVING requires a GROUP BY clause.</td><td>HAVING was used without grouping.</td><td>Add GROUP BY, or move the condition into WHERE.</td></tr>
+          <tr class="searchable"><td>A subquery used with IN must return exactly one column.</td><td>The inner SELECT returns several columns.</td><td>Select just one column, e.g. <code>SELECT customer_id FROM orders</code>.</td></tr>
+          <tr class="searchable"><td>No SELECT query found in the file.</td><td>The uploaded file has no SELECT statements.</td><td>Add at least one SELECT query to the file.</td></tr>
+          <tr class="searchable"><td>Please upload a .sql or .txt file.</td><td>Wrong file type.</td><td>Save your queries as <code>.sql</code> or <code>.txt</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="help-card searchable" style="margin-top:16px;">
+      <h3>🛠️ Page not updating after you edit the code?</h3>
+      <ul>
+        <li>Save the file in VS Code (<kbd>Ctrl</kbd> + <kbd>S</kbd>).</li>
+        <li>Hard refresh the browser with <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd>.</li>
+        <li>Check the address bar: <code>github.io</code> only updates after you commit and push. Local files open as <code>127.0.0.1</code> or <code>file:///</code>.</li>
+        <li>Press <kbd>F12</kbd> → <strong>Console</strong> to see any red error messages.</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- ================= SHORTCUTS ================= -->
+
+  <div class="help-block searchable-block" id="shortcuts">
+    <span class="eyebrow">KEYBOARD SHORTCUTS</span>
+    <h2>Work faster</h2>
+
+    <div class="help-table-wrap">
+      <table class="help-table">
+        <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr class="searchable"><td><kbd>Ctrl</kbd> + <kbd>Enter</kbd> (<kbd>⌘</kbd> + <kbd>Enter</kbd> on Mac)</td><td>Analyze the query in the editor</td></tr>
+          <tr class="searchable"><td><kbd>Esc</kbd></td><td>Close the quiz window</td></tr>
+          <tr class="searchable"><td><kbd>Ctrl</kbd> + <kbd>P</kbd></td><td>Print or save the page as a PDF</td></tr>
+          <tr class="searchable"><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd></td><td>Hard refresh (load the latest code)</td></tr>
+          <tr class="searchable"><td><kbd>/</kbd></td><td>Jump to the help search box (on this page)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ================= TIPS ================= -->
+
+  <div class="help-block searchable-block" id="tips">
+    <span class="eyebrow">OPTIMIZATION TIPS</span>
+    <h2>Write cheaper SQL</h2>
+
+    <div class="help-card-grid">
+      <div class="help-card searchable">
+        <h3>1. Avoid SELECT *</h3>
+        <p>List only the columns you need. Less data is read and sent, and covering indexes become possible.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>2. Filter on indexed columns</h3>
+        <p>Filtering on <code>country</code> uses an index; filtering on <code>city</code> scans the whole table.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>3. Add a LIMIT</h3>
+        <p>If you only need a few rows, say so. It also makes ORDER BY much cheaper.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>4. Filter before grouping</h3>
+        <p>Put row conditions in WHERE, not HAVING, so fewer rows reach GROUP BY.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>5. Avoid leading wildcards</h3>
+        <p><code>LIKE 'abc%'</code> can use an index; <code>LIKE '%abc'</code> cannot.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>6. Join on indexed keys</h3>
+        <p>Join on <code>id</code> / <code>customer_id</code> / <code>product_id</code>. Unindexed joins turn into slow nested loops.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>7. Use DISTINCT sparingly</h3>
+        <p>Duplicates often come from a join that multiplies rows. Fixing the join is cheaper than removing duplicates afterwards.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>8. Prefer JOIN over big IN lists</h3>
+        <p>A JOIN lets the optimizer use indexes on both sides instead of building a long list of values.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= GLOSSARY ================= -->
+
+  <div class="help-block searchable-block" id="glossary">
+    <span class="eyebrow">GLOSSARY</span>
+    <h2>Key terms</h2>
+
+    <div class="help-table-wrap">
+      <table class="help-table">
+        <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+        <tbody>
+          <tr class="searchable"><td><strong>Cardinality</strong></td><td>The number of rows in a table or in an intermediate result.</td></tr>
+          <tr class="searchable"><td><strong>Selectivity</strong></td><td>The fraction of rows a condition keeps. For <code>col = value</code>, roughly 1 ÷ (number of distinct values).</td></tr>
+          <tr class="searchable"><td><strong>Index</strong></td><td>A sorted structure (usually a B-tree) that lets the database find rows without reading the whole table.</td></tr>
+          <tr class="searchable"><td><strong>Sequential (full) scan</strong></td><td>Reading every row of a table, one page after another.</td></tr>
+          <tr class="searchable"><td><strong>Index scan</strong></td><td>Using an index to jump straight to the matching rows.</td></tr>
+          <tr class="searchable"><td><strong>Hash join</strong></td><td>Builds a hash table on one input, then probes it with the other. Fast for equality joins.</td></tr>
+          <tr class="searchable"><td><strong>Nested loop join</strong></td><td>For each row on one side, scan the other side. Slow on large unindexed tables.</td></tr>
+          <tr class="searchable"><td><strong>Hash aggregate</strong></td><td>Groups rows using a hash table to compute COUNT, SUM, AVG, etc.</td></tr>
+          <tr class="searchable"><td><strong>Execution plan</strong></td><td>The ordered list of operations the database will perform to answer a query.</td></tr>
+          <tr class="searchable"><td><strong>Page</strong></td><td>A fixed-size block of rows read from disk. QueryLens assumes 50 rows per page.</td></tr>
+          <tr class="searchable"><td><strong>Covering index</strong></td><td>An index that contains every column a query needs, so the table itself never has to be read.</td></tr>
+          <tr class="searchable"><td><strong>Leftmost-prefix rule</strong></td><td>A multi-column index can only be used if the query filters on its first column.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ================= RUN LOCALLY ================= -->
+
+  <div class="help-block searchable-block" id="run-locally">
+    <span class="eyebrow">FOR DEVELOPERS</span>
+    <h2>Run QueryLens on your computer</h2>
+
+    <div class="help-card-grid">
+      <div class="help-card searchable">
+        <h3>Option 1 — Double-click</h3>
+        <p>Open the project folder and double-click <code>index.html</code>. No installation is needed.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>Option 2 — VS Code Live Server</h3>
+        <p>Install the <strong>Live Server</strong> extension, right-click <code>index.html</code> and choose <em>Open with Live Server</em>. The page reloads when you save.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>Option 3 — Python</h3>
+        <p>In the project folder run <code>python -m http.server 8000</code>, then open <code>http://localhost:8000</code>.</p>
+      </div>
+      <div class="help-card searchable">
+        <h3>Project files</h3>
+        <ul>
+          <li><code>script.js</code> — SQL engine, upload, UI</li>
+          <li><code>cost-model.js</code> — cost estimation</li>
+          <li><code>quiz.js</code> / <code>exam-bank.js</code> — quiz and PYQs</li>
+          <li><code>style.css</code> — styling</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= FAQ ================= -->
+
+  <div class="faq-section searchable-block" id="faq">
 
     <div class="section-heading small-heading">
-
       <div>
         <span class="eyebrow">FAQ</span>
         <h3>Frequently Asked Questions</h3>
       </div>
-
     </div>
-
 
     <div class="faq-grid">
 
-      <details>
+      <details class="searchable">
         <summary>How do I upload a SQL file to estimate cost?</summary>
         <p>
-          Click the <strong>📂 Upload .sql</strong> button in the SQL Input panel or drag and drop your <code>.sql</code> or <code>.txt</code> file directly onto the editor. QueryLens will read the file and automatically compute the execution plan and cost score.
+          Click <strong>📂 Upload .sql</strong> in the SQL Input panel, or drag and drop a
+          <code>.sql</code> / <code>.txt</code> file onto the editor. QueryLens reads the file,
+          finds every SELECT query and analyzes the first one. If there are several,
+          use the dropdown in the upload bar to switch between them.
         </p>
       </details>
 
-      <details>
+      <details class="searchable">
+        <summary>My file has CREATE TABLE / INSERT statements. Will it still work?</summary>
+        <p>
+          Yes. Those statements are skipped and only the SELECT queries are analyzed.
+          The upload bar shows how many statements were skipped.
+        </p>
+      </details>
+
+      <details class="searchable">
+        <summary>Can I use my own tables?</summary>
+        <p>
+          Not yet. QueryLens runs against its built-in demo tables:
+          <code>customers</code>, <code>products</code> and <code>orders</code>.
+          Any other table name gives an "Unknown table" error.
+        </p>
+      </details>
+
+      <details class="searchable">
         <summary>Is QueryLens completely browser-based?</summary>
         <p>
           Yes. All parsing, execution and costing run in JavaScript inside
-          your browser. Nothing is sent to a server.
+          your browser. Nothing is sent to a server, and it works offline once loaded.
         </p>
       </details>
 
-      <details>
+      <details class="searchable">
         <summary>Does QueryLens use a real database server?</summary>
         <p>
-          No. It generates a demonstration dataset in browser memory each
-          time the page loads, using fixed seeds so results stay reproducible.
+          No. It generates a demo dataset in browser memory every time the
+          page loads. The values are random, so exact row counts and results
+          change slightly after each refresh, while table sizes stay the same.
         </p>
       </details>
 
-      <details>
+      <details class="searchable">
         <summary>What SQL statements are supported?</summary>
         <p>
-          SELECT queries with WHERE, AND, OR, NOT, parentheses, IN,
-          comparison operators, INNER JOIN, LEFT JOIN, GROUP BY, HAVING,
-          COUNT, SUM, AVG, MIN, MAX, ORDER BY and LIMIT.
+          SELECT queries with WHERE, AND, OR, NOT, parentheses, IN (including IN subqueries),
+          BETWEEN, LIKE, IS NULL, comparison operators, INNER/LEFT JOIN, GROUP BY, HAVING,
+          COUNT, SUM, AVG, MIN, MAX, DISTINCT, ORDER BY and LIMIT.
+          See <a href="#supported">Supported SQL</a> for the full list.
         </p>
       </details>
 
-      <details>
+      <details class="searchable">
         <summary>What does the Query Score mean?</summary>
         <p>
           Scores run from 1 to 100, where 100 is best. They reward index
-          usage, low selectivity and small result sets, and penalise full
+          usage, selective filters and small result sets, and penalise full
           scans on large tables, unindexed joins and large sorts.
         </p>
       </details>
 
-      <details>
+      <details class="searchable">
+        <summary>Why is the execution time different every time?</summary>
+        <p>
+          Execution time is measured live in your browser and depends on your
+          computer, other open tabs and caching. Use the Estimated Cost to
+          compare queries; it stays the same for the same query.
+        </p>
+      </details>
+
+      <details class="searchable">
         <summary>How is Selectivity calculated?</summary>
         <p>
           Selectivity is the fraction of rows expected to satisfy a WHERE
-          condition. For an equality test on an indexed column with V
-          distinct values, selectivity is 1/V. QueryLens multiplies
-          selectivity by table cardinality to predict surviving rows.
+          condition. For an equality test on a column with V distinct values,
+          selectivity is 1/V. AND conditions are multiplied together; QueryLens
+          multiplies the result by the table size to predict surviving rows.
         </p>
       </details>
 
-      <details>
+      <details class="searchable">
         <summary>Why does QueryLens recommend CREATE INDEX statements?</summary>
         <p>
-          When a query filters or joins on an unindexed column, QueryLens
-          detects the full scan and suggests an index that would turn that
-          scan into a direct lookup.
+          When a query filters on an unindexed column, QueryLens detects the
+          full scan and suggests an index that would turn it into a direct
+          lookup. These are suggestions for your real database; QueryLens does not run them.
         </p>
       </details>
 
-      <details>
+      <details class="searchable">
+        <summary>Why does my query return 0 rows?</summary>
+        <p>
+          Check spelling and values: countries, cities, categories and statuses
+          must match the values in the <a href="#schema">Database Reference</a>.
+          Text comparisons ignore upper/lower case, but <code>'Bombay'</code> won't match <code>'Mumbai'</code>.
+        </p>
+      </details>
+
+      <details class="searchable">
+        <summary>Why does the result table show only 100 rows?</summary>
+        <p>
+          To keep the page fast, the table shows the first 100 rows.
+          "Rows Returned" still shows the full count.
+        </p>
+      </details>
+
+      <details class="searchable">
+        <summary>Where is my history stored? How do I delete it?</summary>
+        <p>
+          History is saved in your browser's local storage on this device only.
+          Click <strong>Clear History</strong> in the Analysis History panel to delete it.
+        </p>
+      </details>
+
+      <details class="searchable">
         <summary>Can I print or save a PDF of my analysis?</summary>
         <p>
           Yes. Choose Print / Save PDF from the Download menu, then select
-          "Save as PDF" in your browser's print dialog. The print style sheet
-          formats your analysis neatly on the page.
+          "Save as PDF" in your browser's print dialog.
+        </p>
+      </details>
+
+      <details class="searchable">
+        <summary>Does QueryLens work on mobile?</summary>
+        <p>
+          Yes. Use the ☰ menu to navigate. A larger screen is easier for
+          reading execution plans and wide result tables.
+        </p>
+      </details>
+
+      <details class="searchable">
+        <summary>The demo queries or upload don't seem to work. What should I do?</summary>
+        <p>
+          Hard refresh with <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd>. Then click
+          <strong>Run Tests</strong> on the Analyze page — every test should pass.
+          If not, press <kbd>F12</kbd> and check the Console for red errors.
         </p>
       </details>
 
@@ -274,6 +1082,8 @@
 </section>
 
 </main>
+
+<button class="back-to-top" id="backToTop" type="button" title="Back to top">↑</button>
 
 <!-- ================= FOOTER ================= -->
 
@@ -301,6 +1111,143 @@
 <script src="cost-model.js"></script>
 <script src="script.js"></script>
 <script src="quiz.js"></script>
+
+<script>
+/* =========================================================
+   HELP PAGE INTERACTIONS
+   Wrapped in an IIFE so names don't clash with script.js.
+========================================================= */
+(function(){
+
+  const byId = id => document.getElementById(id);
+
+  /* ---------- Example cards: fill SQL, Try it + Copy ---------- */
+
+  document.querySelectorAll(".example-card[data-sql]").forEach(card=>{
+
+    const sql = card.getAttribute("data-sql");
+    const pre = card.querySelector("pre");
+    const actions = card.querySelector(".example-actions");
+
+    if(pre){
+      pre.textContent = sql
+        .replace(/\s+(FROM|WHERE|JOIN|GROUP BY|HAVING|ORDER BY|LIMIT)\b/g,"\n$1");
+    }
+
+    if(!actions) return;
+
+    const tryLink = document.createElement("a");
+    tryLink.className = "primary-button small";
+    tryLink.textContent = "▶ Try it";
+    tryLink.href = "index.html?sql=" + encodeURIComponent(sql);
+
+    const copyBtn = document.createElement("button");
+    copyBtn.type = "button";
+    copyBtn.className = "ghost-button small";
+    copyBtn.textContent = "Copy";
+
+    copyBtn.addEventListener("click",()=>{
+
+      const done = ()=>{
+        copyBtn.textContent = "Copied ✓";
+        setTimeout(()=>{ copyBtn.textContent = "Copy"; },1500);
+      };
+
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(sql).then(done).catch(()=>fallbackCopy(sql,done));
+      }else{
+        fallbackCopy(sql,done);
+      }
+    });
+
+    actions.appendChild(tryLink);
+    actions.appendChild(copyBtn);
+  });
+
+  function fallbackCopy(text,done){
+    const area = document.createElement("textarea");
+    area.value = text;
+    document.body.appendChild(area);
+    area.select();
+    try{ document.execCommand("copy"); }catch(e){}
+    area.remove();
+    done();
+  }
+
+
+  /* ---------- Live search ---------- */
+
+  const search = byId("helpSearch");
+  const noResults = byId("helpNoResults");
+
+  function runSearch(){
+
+    const term = (search.value || "").trim().toLowerCase();
+    let anyVisible = false;
+
+    document.querySelectorAll(".searchable-block").forEach(block=>{
+
+      const items = block.querySelectorAll(".searchable");
+      let blockHasMatch = false;
+
+      items.forEach(item=>{
+        const match = !term || item.textContent.toLowerCase().includes(term);
+        item.classList.toggle("hidden-by-search",!match);
+
+        /* Open matching FAQ answers so the user sees them. */
+        if(item.tagName === "DETAILS"){
+          item.open = Boolean(term && match);
+        }
+
+        if(match) blockHasMatch = true;
+      });
+
+      block.classList.toggle("hidden-by-search",Boolean(term) && !blockHasMatch);
+      if(blockHasMatch) anyVisible = true;
+    });
+
+    if(noResults){
+      noResults.classList.toggle("hidden",!term || anyVisible);
+    }
+  }
+
+  if(search){
+    search.addEventListener("input",runSearch);
+
+    search.addEventListener("keydown",event=>{
+      if(event.key === "Escape"){
+        search.value = "";
+        runSearch();
+      }
+    });
+  }
+
+  /* Press "/" anywhere to focus the search box. */
+  document.addEventListener("keydown",event=>{
+    const tag = (document.activeElement && document.activeElement.tagName) || "";
+    if(event.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(tag) && search){
+      event.preventDefault();
+      search.focus();
+    }
+  });
+
+
+  /* ---------- Back to top button ---------- */
+
+  const backToTop = byId("backToTop");
+
+  if(backToTop){
+    window.addEventListener("scroll",()=>{
+      backToTop.classList.toggle("show",window.scrollY > 600);
+    });
+
+    backToTop.addEventListener("click",()=>{
+      window.scrollTo({ top:0, behavior:"smooth" });
+    });
+  }
+
+})();
+</script>
 
 </body>
 </html>
